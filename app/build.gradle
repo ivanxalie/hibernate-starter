@@ -17,11 +17,17 @@ repositories {
 }
 
 dependencies {
-    // This dependency is used by the application.
+   implementation(libs.hibernate.core)
+    runtimeOnly(libs.postgres.driver)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+
     testImplementation(libs.junit.api)
     testImplementation(libs.junit.params) // если используешь @ParameterizedTest
     testRuntimeOnly(libs.junit.engine)
     testImplementation(libs.assertj.lib)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 }
 
 test {

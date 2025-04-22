@@ -4,9 +4,15 @@
 [versions]
 junit = "5.10.2"
 assertj = "3.27.3"
+hibernate = "6.6.12.Final"
+postgres = "42.7.5"
+lombok_version = "1.18.38"
 
 [libraries]
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
 assertj-lib = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+hibernate-core = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
+postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok_version" }
