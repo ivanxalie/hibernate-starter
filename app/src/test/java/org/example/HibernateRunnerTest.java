@@ -3,6 +3,7 @@ package org.example;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.example.entity.Birthday;
 import org.example.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
@@ -22,8 +23,7 @@ class HibernateRunnerTest {
                 .username("Alex")
                 .firstName("Alex")
                 .lastName("Alex")
-                .birthDate(LocalDate.of(1992, Month.APRIL, 12))
-                .age(33)
+                .birthDate(new Birthday(LocalDate.of(1992, Month.APRIL, 12)))
                 .build();
 
         String sql = """

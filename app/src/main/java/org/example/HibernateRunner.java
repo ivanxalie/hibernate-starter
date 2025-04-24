@@ -3,6 +3,7 @@
  */
 package org.example;
 
+import org.example.converter.BirthdayConverter;
 import org.example.entity.Birthday;
 import org.example.entity.Role;
 import org.example.entity.User;
@@ -21,6 +22,7 @@ public class HibernateRunner {
     public static void main(String[] args) {
         Configuration configuration = new Configuration()
                 .configure()
+                .addAttributeConverter(BirthdayConverter.class, true)
                 .setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
 
         try (SessionFactory factory = configuration.buildSessionFactory();
