@@ -3,46 +3,25 @@
  */
 package org.example;
 
-import org.example.converter.BirthdayConverter;
-import org.example.entity.Birthday;
-import org.example.entity.Role;
-import org.example.entity.User;
+import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
-import org.hibernate.cfg.Configuration;
-
-import java.time.LocalDate;
-import java.time.Month;
 
 
 public class HibernateRunner {
 
     public static void main(String[] args) {
-        Configuration configuration = new Configuration()
-                .configure()
-                .addAttributeConverter(BirthdayConverter.class)
-                .setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
+        try (SessionFactory factory = HibernateUtil.buildSessionFactory()) {
+            try (Session session1 = factory.openSession()) {
+                session1.beginTransaction();
 
-        try (SessionFactory factory = configuration.buildSessionFactory();
-             Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            User user = User.builder()
-                    .username("Alex")
-                    .firstName("Harry")
-                    .lastName("Potter")
-                    .birthDate(new Birthday(LocalDate.of(1992, Month.APRIL, 12)))
-                    .role(Role.ADMIN)
-                    .info("""
-                            {
-                                "name": "Alex",
-                                "id": 25
-                            }
-                            """)
-                    .build();
-            session.persist(user);
-            transaction.commit();
+                session1.getTransaction().commit();
+            }
+            try (Session session2 = factory.openSession()) {
+                session2.beginTransaction();
+
+                session2.getTransaction().commit();
+            }
         }
     }
 }
