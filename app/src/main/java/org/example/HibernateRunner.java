@@ -22,7 +22,7 @@ public class HibernateRunner {
     public static void main(String[] args) {
         Configuration configuration = new Configuration()
                 .configure()
-                .addAttributeConverter(BirthdayConverter.class, true)
+                .addAttributeConverter(BirthdayConverter.class)
                 .setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
 
         try (SessionFactory factory = configuration.buildSessionFactory();
