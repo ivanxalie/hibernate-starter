@@ -30,10 +30,16 @@ public class HibernateRunner {
             Transaction transaction = session.beginTransaction();
             User user = User.builder()
                     .username("Alex")
-                    .firstName("Alex")
-                    .lastName("Alex")
+                    .firstName("Harry")
+                    .lastName("Potter")
                     .birthDate(new Birthday(LocalDate.of(1992, Month.APRIL, 12)))
                     .role(Role.ADMIN)
+                    .info("""
+                            {
+                                "name": "Alex",
+                                "id": 25
+                            }
+                            """)
                     .build();
             session.persist(user);
             transaction.commit();

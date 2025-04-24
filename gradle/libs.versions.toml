@@ -7,6 +7,8 @@ assertj = "3.27.3"
 hibernate = "6.6.12.Final"
 postgres = "42.7.5"
 lombok_version = "1.18.38"
+databind = "2.18.3"
+slf = "1.7.32"
 
 [libraries]
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
@@ -16,3 +18,5 @@ assertj-lib = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 hibernate-core = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
 postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok_version" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "databind" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf" }
