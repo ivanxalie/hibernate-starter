@@ -3,6 +3,7 @@
  */
 package org.example;
 
+import org.example.entity.Birthday;
 import org.example.entity.Role;
 import org.example.entity.User;
 import org.hibernate.Session;
@@ -29,8 +30,7 @@ public class HibernateRunner {
                     .username("Alex")
                     .firstName("Alex")
                     .lastName("Alex")
-                    .birthDate(LocalDate.of(1992, Month.APRIL, 12))
-                    .age(33)
+                    .birthDate(new Birthday(LocalDate.of(1992, Month.APRIL, 12)))
                     .role(Role.ADMIN)
                     .build();
             session.persist(user);
