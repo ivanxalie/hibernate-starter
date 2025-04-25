@@ -3,22 +3,33 @@
  */
 package org.example;
 
+import org.example.entity.User;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 
 public class HibernateRunner {
-
     public static void main(String[] args) {
+        User user = User.builder()
+                .username("ivan@gmail.com")
+                .firstName("Ivan")
+                .lastName("Ivanov")
+                .build();
         try (SessionFactory factory = HibernateUtil.buildSessionFactory()) {
             try (Session session1 = factory.openSession()) {
                 session1.beginTransaction();
+
+                session1.merge(user);
 
                 session1.getTransaction().commit();
             }
             try (Session session2 = factory.openSession()) {
                 session2.beginTransaction();
+
+                user.setFirstName("Sveta");
+
+                session2.merge(user);
 
                 session2.getTransaction().commit();
             }
