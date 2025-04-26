@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.hibernate.core)
     implementation(libs.jackson.databind)
     implementation(libs.slf4j)
+    implementation(libs.log4j.impl)
 
     runtimeOnly(libs.postgres.driver)
     compileOnly(libs.lombok)
