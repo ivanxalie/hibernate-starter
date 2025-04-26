@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.example.entity.Birthday;
+import org.example.entity.PersonalInfo;
 import org.example.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
@@ -21,9 +22,11 @@ class HibernateRunnerTest {
     void checkReflectionApi() {
         User user = User.builder()
                 .username("Alex")
-                .firstName("Alex")
-                .lastName("Alex")
-                .birthDate(new Birthday(LocalDate.of(1992, Month.APRIL, 12)))
+                .personalInfo(PersonalInfo.builder()
+                        .firstName("Alex")
+                        .lastName("Alex")
+                        .birthDate(new Birthday(LocalDate.of(1992, Month.APRIL, 12)))
+                        .build())
                 .build();
 
         String sql = """

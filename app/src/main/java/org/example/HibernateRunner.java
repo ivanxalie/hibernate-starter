@@ -4,13 +4,15 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.entity.Birthday;
+import org.example.entity.PersonalInfo;
 import org.example.entity.User;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.time.LocalDate;
 
 
 @Slf4j
@@ -19,8 +21,11 @@ public class HibernateRunner {
     public static void main(String[] args) {
         User user = User.builder()
                 .username("ivan@gmail.com")
-                .firstName("Ivan")
-                .lastName("Ivanov")
+                .personalInfo(PersonalInfo.builder()
+                        .firstName("Ivan")
+                        .lastName("Ivanov")
+                        .birthDate(new Birthday(LocalDate.of(1990, 12, 12)))
+                        .build())
                 .build();
 
         log.info("User entity in transient state, object: {}", user);

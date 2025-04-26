@@ -17,9 +17,8 @@ import org.hibernate.type.SqlTypes;
 public class User {
     @Id
     private String username;
-    private String firstName;
-    private String lastName;
-    private Birthday birthDate;
+    @Embedded
+    private PersonalInfo personalInfo;
     @Enumerated(EnumType.STRING)
     private Role role;
     @JdbcTypeCode(SqlTypes.JSON)
