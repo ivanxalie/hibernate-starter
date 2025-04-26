@@ -3,6 +3,7 @@
  */
 package org.example;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.entity.User;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
@@ -12,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+@Slf4j
 public class HibernateRunner {
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateRunner.class);
 
     public static void main(String[] args) {
         User user = User.builder()
@@ -22,23 +23,23 @@ public class HibernateRunner {
                 .lastName("Ivanov")
                 .build();
 
-        LOG.info("User entity in transient state, object: {}", user);
+        log.info("User entity in transient state, object: {}", user);
 
         try (SessionFactory factory = HibernateUtil.buildSessionFactory()) {
             Session session1 = factory.openSession();
             try (session1) {
                 Transaction transaction = session1.beginTransaction();
-                LOG.trace("Transaction is created, {}", transaction);
+                log.trace("Transaction is created, {}", transaction);
 
 
                 session1.merge(user);
-                LOG.trace("User is in persistent state:{}, session {}", user, session1);
+                log.trace("User is in persistent state:{}, session {}", user, session1);
 
                 transaction.commit();
             }
-            LOG.warn("User is in detached state: {}, session is closed {}", user, session1);
+            log.warn("User is in detached state: {}, session is closed {}", user, session1);
         } catch (Exception e) {
-            LOG.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             throw e;
         }
     }
