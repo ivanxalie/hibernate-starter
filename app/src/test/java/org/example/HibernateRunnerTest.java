@@ -3,9 +3,13 @@ package org.example;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Cleanup;
 import org.example.entity.Birthday;
+import org.example.entity.Company;
 import org.example.entity.PersonalInfo;
 import org.example.entity.User;
+import org.example.util.HibernateUtil;
+import org.hibernate.Transaction;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 
@@ -14,9 +18,25 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class HibernateRunnerTest {
+
+    @Test
+    void oneToMany() {
+        @Cleanup var factory = HibernateUtil.buildSessionFactory();
+        @Cleanup var session = factory.openSession();
+
+        Transaction transaction = session.beginTransaction();
+
+        var company = session.get(Company.class, 5);
+        Set<User> users = company.getUsers();
+        users.forEach(System.out::println);
+        System.out.println();
+
+        transaction.commit();
+    }
 
     @Test
     void checkReflectionApi() {

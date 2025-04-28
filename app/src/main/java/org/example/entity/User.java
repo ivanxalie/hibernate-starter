@@ -31,7 +31,7 @@ public class User {
     @JdbcTypeCode(SqlTypes.JSON)
     private String info;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.PERSIST})
     @JoinColumn(name = "company_id")
     private Company company;
 }

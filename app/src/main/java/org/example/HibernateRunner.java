@@ -22,15 +22,15 @@ public class HibernateRunner {
 
     public static void main(String[] args) {
         PersonalInfo personalInfo = PersonalInfo.builder()
-                .firstName("Ivan")
-                .lastName("Ivanov")
+                .firstName("Alex")
+                .lastName("Sink'off")
                 .birthDate(new Birthday(LocalDate.of(1990, 12, 12)))
                 .build();
         Company company = Company.builder()
-                .name("Tmp Inc.")
+                .name("Company%s".formatted(ThreadLocalRandom.current().nextInt()))
                 .build();
         User user = User.builder()
-                .username("ivan%s@gmail.com".formatted(ThreadLocalRandom.current().nextInt()))
+                .username("alex%s@gmail.com".formatted(ThreadLocalRandom.current().nextInt()))
                 .personalInfo(personalInfo)
                 .company(company)
                 .build();
@@ -39,8 +39,11 @@ public class HibernateRunner {
             Session session1 = factory.openSession();
             try (session1) {
                 Transaction transaction = session1.beginTransaction();
-                session1.persist(company);
+//                session1.persist(company);
+//                session1.persist(user);
+
                 session1.persist(user);
+
                 transaction.commit();
             }
         }
