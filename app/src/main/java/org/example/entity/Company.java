@@ -3,6 +3,7 @@ package org.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -10,15 +11,23 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "users")
-@EqualsAndHashCode(exclude = "users")
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(nullable = false, unique = true)
+    @EqualsAndHashCode.Include
     private String name;
 
-    @OneToMany(mappedBy = "company")
-//    @JoinColumn(name = "company_id")
-    private Set<User> users;
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.ALL})
+    @Builder.Default
+    private Set<User> users = new HashSet<>();
+
+    public void addUser(User user) {
+        users.add(user);
+        user.setCompany(this);
+    }
 }
