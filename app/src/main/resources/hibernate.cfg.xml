@@ -13,5 +13,6 @@
         <property name="hibernate.hbm2ddl.auto">validate</property>
 
         <mapping class="org.example.entity.User" />
+        <mapping class="org.example.entity.Company" />
     </session-factory>
 </hibernate-configuration>

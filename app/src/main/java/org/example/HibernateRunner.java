@@ -5,6 +5,7 @@ package org.example;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.Birthday;
+import org.example.entity.Company;
 import org.example.entity.PersonalInfo;
 import org.example.entity.User;
 import org.example.util.HibernateUtil;
@@ -25,34 +26,23 @@ public class HibernateRunner {
                 .lastName("Ivanov")
                 .birthDate(new Birthday(LocalDate.of(1990, 12, 12)))
                 .build();
+        Company company = Company.builder()
+                .name("Tmp Inc.")
+                .build();
         User user = User.builder()
                 .username("ivan%s@gmail.com".formatted(ThreadLocalRandom.current().nextInt()))
                 .personalInfo(personalInfo)
+                .company(company)
                 .build();
-
-        log.info("User entity in transient state, object: {}", user);
 
         try (SessionFactory factory = HibernateUtil.buildSessionFactory()) {
             Session session1 = factory.openSession();
             try (session1) {
                 Transaction transaction = session1.beginTransaction();
-                log.trace("Transaction is created, {}", transaction);
-
-
-                user = session1.merge(user);
-                log.trace("User is in persistent state:{}, session {}", user, session1);
-
+                session1.persist(company);
+                session1.persist(user);
                 transaction.commit();
             }
-            log.warn("User is in detached state: {}, session is closed {}", user, session1);
-            try (Session session2 = factory.openSession()) {
-                User fetchedUser = session2.find(User.class, user.getId());
-                assert fetchedUser != null;
-                log.info("Fetched user: {}", fetchedUser);
-            }
-        } catch (Exception e) {
-            log.error("Exception occurred", e);
-            throw e;
         }
     }
 }

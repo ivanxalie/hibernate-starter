@@ -15,7 +15,6 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @Builder
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +24,14 @@ public class User {
 
     @Embedded
     private PersonalInfo personalInfo;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private String info;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 }
