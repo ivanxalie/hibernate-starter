@@ -22,6 +22,7 @@ public class User {
 
     @Column(unique = true)
     private String username;
+
     @Embedded
     private PersonalInfo personalInfo;
     @Enumerated(EnumType.STRING)

@@ -13,19 +13,21 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 @Slf4j
 public class HibernateRunner {
 
     public static void main(String[] args) {
+        PersonalInfo personalInfo = PersonalInfo.builder()
+                .firstName("Ivan")
+                .lastName("Ivanov")
+                .birthDate(new Birthday(LocalDate.of(1990, 12, 12)))
+                .build();
         User user = User.builder()
-                .username("ivan@gmail.com")
-                .personalInfo(PersonalInfo.builder()
-                        .firstName("Ivan")
-                        .lastName("Ivanov")
-                        .birthDate(new Birthday(LocalDate.of(1990, 12, 12)))
-                        .build())
+                .username("ivan%s@gmail.com".formatted(ThreadLocalRandom.current().nextInt()))
+                .personalInfo(personalInfo)
                 .build();
 
         log.info("User entity in transient state, object: {}", user);
@@ -37,12 +39,17 @@ public class HibernateRunner {
                 log.trace("Transaction is created, {}", transaction);
 
 
-                session1.merge(user);
+                user = session1.merge(user);
                 log.trace("User is in persistent state:{}, session {}", user, session1);
 
                 transaction.commit();
             }
             log.warn("User is in detached state: {}, session is closed {}", user, session1);
+            try (Session session2 = factory.openSession()) {
+                User fetchedUser = session2.find(User.class, user.getId());
+                assert fetchedUser != null;
+                log.info("Fetched user: {}", fetchedUser);
+            }
         } catch (Exception e) {
             log.error("Exception occurred", e);
             throw e;
