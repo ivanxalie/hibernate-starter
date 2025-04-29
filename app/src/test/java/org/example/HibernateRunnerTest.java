@@ -4,10 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Cleanup;
-import org.example.entity.Birthday;
-import org.example.entity.Company;
-import org.example.entity.PersonalInfo;
-import org.example.entity.User;
+import org.example.entity.*;
 import org.example.util.HibernateUtil;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Test;
@@ -21,6 +18,44 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 class HibernateRunnerTest {
+
+    @Test
+    void checkOneToOne() {
+        try (var factory = HibernateUtil.buildSessionFactory();
+             var session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+//            var user = User.builder()
+//                    .username("test2@gmail.com")
+//                    .build();
+//
+//            var profile = Profile.builder()
+//                    .language("ru")
+//                    .street("Example 123")
+//                    .build();
+
+//            session.persist(user);
+//            profile.setUser(user);
+
+            User user = session.find(User.class, 123L);
+            System.out.println(user);
+
+            transaction.commit();
+        }
+    }
+
+    @Test
+    void checkOrphanRemove() {
+        try (var factory = HibernateUtil.buildSessionFactory();
+             var session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            var company = session.getReference(Company.class, 16);
+            company.getUsers().removeIf(user -> user.getId() == 30L);
+
+            transaction.commit();
+        }
+    }
 
     @Test
     void checkLazyInitialisation() {

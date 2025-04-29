@@ -29,11 +29,6 @@ public class HibernateRunner {
         Company company = Company.builder()
                 .name("Company%s".formatted(ThreadLocalRandom.current().nextInt()))
                 .build();
-        User user = User.builder()
-                .username("alex%s@gmail.com".formatted(ThreadLocalRandom.current().nextInt()))
-                .personalInfo(personalInfo)
-                .company(company)
-                .build();
 
         try (SessionFactory factory = HibernateUtil.buildSessionFactory()) {
             Session session1 = factory.openSession();
@@ -41,11 +36,19 @@ public class HibernateRunner {
                 Transaction transaction = session1.beginTransaction();
 //                session1.persist(company);
 //                session1.persist(user);
-
-                session1.persist(user);
+                createRandomUser(company, 100);
+                session1.persist(company);
 
                 transaction.commit();
             }
+        }
+    }
+
+    private static void createRandomUser(Company company, int users) {
+        for (int i = 0; i < users; i++) {
+            company.addUser(User.builder()
+                            .username("username-" + ThreadLocalRandom.current().nextLong())
+                    .build());
         }
     }
 }

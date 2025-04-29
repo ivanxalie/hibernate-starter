@@ -12,7 +12,7 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = "company")
+@ToString(exclude = {"company", "profile"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,10 @@ public class User {
     @JdbcTypeCode(SqlTypes.JSON)
     private String info;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Profile profile;
 }

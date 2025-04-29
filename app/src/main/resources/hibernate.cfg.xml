@@ -14,5 +14,6 @@
 
         <mapping class="org.example.entity.User" />
         <mapping class="org.example.entity.Company" />
+        <mapping class="org.example.entity.Profile" />
     </session-factory>
 </hibernate-configuration>

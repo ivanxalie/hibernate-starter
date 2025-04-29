@@ -22,7 +22,7 @@ public class Company {
     @EqualsAndHashCode.Include
     private String name;
 
-    @OneToMany(mappedBy = "company", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<User> users = new HashSet<>();
 
