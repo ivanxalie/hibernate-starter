@@ -26,18 +26,19 @@ class HibernateRunnerTest {
             Transaction transaction = session.beginTransaction();
 
 //            var user = User.builder()
-//                    .username("test2@gmail.com")
+//                    .username("test3@gmail.com")
 //                    .build();
 //
 //            var profile = Profile.builder()
 //                    .language("ru")
 //                    .street("Example 123")
 //                    .build();
-
-//            session.persist(user);
+//
 //            profile.setUser(user);
+//
+//            session.persist(user);
 
-            User user = session.find(User.class, 123L);
+            User user = session.find(User.class, 124L);
             System.out.println(user);
 
             transaction.commit();
