@@ -16,5 +16,6 @@
         <mapping class="org.example.entity.Company" />
         <mapping class="org.example.entity.Profile" />
         <mapping class="org.example.entity.Chat" />
+        <mapping class="org.example.entity.UserChat" />
     </session-factory>
 </hibernate-configuration>

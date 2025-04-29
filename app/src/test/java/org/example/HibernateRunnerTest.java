@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
@@ -26,15 +27,17 @@ class HibernateRunnerTest {
             Transaction transaction = session.beginTransaction();
 
             User user = session.find(User.class, 124L);
-            user.getChats().clear();
+            Chat chat = session.find(Chat.class, 1L);
 
-//            Chat chat = Chat.builder()
-//                    .name("ChatGPT")
-//                    .build();
+            UserChat userChat = UserChat.builder()
+                    .createdAt(Instant.now())
+                    .createdBy(user.getUsername())
+                    .build();
 
-//            user.addChat(chat);
+            userChat.setChat(chat);
+            userChat.setUser(user);
 
-//            session.persist(chat);
+            session.persist(userChat);
 
             transaction.commit();
         }

@@ -5,8 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = {"company", "profile", "chats"})
+@ToString(exclude = {"company", "profile", "userChats"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,16 +46,7 @@ public class User {
             )
     private Profile profile;
 
-    @ManyToMany
-    @JoinTable(name = "users_chat",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "chat_id")
-    )
+    @OneToMany(mappedBy = "user")
     @Builder.Default
-    private Set<Chat> chats = new HashSet<>();
-
-    public void addChat(Chat chat) {
-        chat.getUsers().add(this);
-        chats.add(chat);
-    }
+    private List<UserChat> userChats = new ArrayList<>();
 }

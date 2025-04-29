@@ -3,8 +3,8 @@ package org.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -12,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = "users")
+@ToString(exclude = "userChats")
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class Chat {
     @EqualsAndHashCode.Include
     private String name;
 
-    @ManyToMany(mappedBy = "chats")
+    @OneToMany(mappedBy = "chat")
     @Builder.Default
-    private Set<User> users = new HashSet<>();
+    private List<UserChat> userChats = new ArrayList<>();
 }
