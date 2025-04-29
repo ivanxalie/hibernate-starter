@@ -20,6 +20,27 @@ import java.util.stream.Collectors;
 class HibernateRunnerTest {
 
     @Test
+    void checkManyToMany() {
+        try (var factory = HibernateUtil.buildSessionFactory();
+             var session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            User user = session.find(User.class, 124L);
+            user.getChats().clear();
+
+//            Chat chat = Chat.builder()
+//                    .name("ChatGPT")
+//                    .build();
+
+//            user.addChat(chat);
+
+//            session.persist(chat);
+
+            transaction.commit();
+        }
+    }
+
+    @Test
     void checkOneToOne() {
         try (var factory = HibernateUtil.buildSessionFactory();
              var session = factory.openSession()) {
