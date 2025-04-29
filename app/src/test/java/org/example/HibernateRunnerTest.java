@@ -18,10 +18,22 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 class HibernateRunnerTest {
+
+    @Test
+    void checkLazyInitialisation() {
+        Company company;
+        try (var factory = HibernateUtil.buildSessionFactory();
+             var session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            company = session.getReference(Company.class, 15);
+            transaction.commit();
+        }
+        System.out.println(company.getUsers());
+    }
 
     @Test
     void deleteCompany() {
@@ -66,9 +78,7 @@ class HibernateRunnerTest {
         Transaction transaction = session.beginTransaction();
 
         var company = session.get(Company.class, 5);
-        Set<User> users = company.getUsers();
-        users.forEach(System.out::println);
-        System.out.println();
+        System.out.println(company.getUsers());
 
         transaction.commit();
     }
