@@ -3,10 +3,10 @@ package org.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.MapKeyJdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Data
 @Entity
@@ -26,17 +26,19 @@ public class Company {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<User> users = new ArrayList<>();
+    @MapKey(name = "username")
+    private SortedMap<String, User> users = new TreeMap<>();
 
     @ElementCollection
     @CollectionTable(name = "company_locale", joinColumns = @JoinColumn(name = "company_id"))
     @Builder.Default
-    @Column(name = "lang")
-    @JdbcTypeCode(SqlTypes.CHAR)
-    private List<String> locales = new ArrayList<>();
+    @Column(name = "description")
+    @MapKeyColumn(name = "lang")
+    @MapKeyJdbcTypeCode(SqlTypes.CHAR)
+    private Map<String, String> locales = new HashMap<>();
 
     public void addUser(User user) {
-        users.add(user);
+        users.put(user.getUsername(), user);
         user.setCompany(this);
     }
 }

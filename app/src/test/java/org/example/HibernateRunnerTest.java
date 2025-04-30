@@ -21,6 +21,20 @@ import java.util.stream.Collectors;
 class HibernateRunnerTest {
 
     @Test
+    void sortByUsername() {
+        try (var factory = HibernateUtil.buildSessionFactory();
+             var session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            Company company = session.find(Company.class, 18);
+
+            company.getLocales().forEach((key, value) -> System.out.printf("%s:%s%n", key, value));
+
+            transaction.commit();
+        }
+    }
+
+    @Test
     void localeInfo() {
         try (var factory = HibernateUtil.buildSessionFactory();
              var session = factory.openSession()) {
@@ -30,7 +44,7 @@ class HibernateRunnerTest {
 //            company.getLocales().add(LocaleInfo.of("ru", "Описание на русском"));
 //            company.getLocales().add(LocaleInfo.of("en", "English description"));
 
-            company.getLocales().forEach(System.out::println);
+            company.getLocales().entrySet().forEach(System.out::println);
 
             transaction.commit();
         }
@@ -92,7 +106,7 @@ class HibernateRunnerTest {
             Transaction transaction = session.beginTransaction();
 
             var company = session.getReference(Company.class, 16);
-            company.getUsers().removeIf(user -> user.getId() == 30L);
+            company.getUsers().entrySet().removeIf(user -> user.getValue().getId() == 30L);
 
             transaction.commit();
         }

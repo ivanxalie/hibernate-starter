@@ -4,10 +4,7 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Birthday;
-import org.example.entity.Company;
-import org.example.entity.PersonalInfo;
-import org.example.entity.User;
+import org.example.entity.*;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,13 +18,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class HibernateRunner {
 
     public static void main(String[] args) {
-        PersonalInfo personalInfo = PersonalInfo.builder()
-                .firstName("Alex")
-                .lastName("Sink'off")
-                .birthDate(new Birthday(LocalDate.of(1990, 12, 12)))
-                .build();
         Company company = Company.builder()
-                .name("Company%s".formatted(ThreadLocalRandom.current().nextInt()))
+                .name("Amazon")
                 .build();
 
         try (SessionFactory factory = HibernateUtil.buildSessionFactory()) {
@@ -37,6 +29,7 @@ public class HibernateRunner {
 //                session1.persist(company);
 //                session1.persist(user);
                 createRandomUser(company, 100);
+
                 session1.persist(company);
 
                 transaction.commit();
@@ -47,7 +40,16 @@ public class HibernateRunner {
     private static void createRandomUser(Company company, int users) {
         for (int i = 0; i < users; i++) {
             company.addUser(User.builder()
-                            .username("username-" + ThreadLocalRandom.current().nextLong())
+                    .username("username-" + ThreadLocalRandom.current().nextLong())
+                    .personalInfo(PersonalInfo.builder()
+                            .firstName("Alex" + ThreadLocalRandom.current().nextLong())
+                            .lastName("Alex" + ThreadLocalRandom.current().nextLong())
+                            .birthDate(new Birthday(LocalDate.of(
+                                    ThreadLocalRandom.current().nextInt(1950, 2005),
+                                    ThreadLocalRandom.current().nextInt(1, 12),
+                                    ThreadLocalRandom.current().nextInt(1, 20)
+                            )))
+                            .build())
                     .build());
         }
     }

@@ -7,6 +7,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = {"company", "profile", "userChats"})
-public class User {
+public class User implements Comparable<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,4 +50,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<UserChat> userChats = new ArrayList<>();
+
+    @Override
+    public int compareTo(User o) {
+        return o.id.compareTo(id);
+    }
 }
