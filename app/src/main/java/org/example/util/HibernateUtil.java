@@ -10,10 +10,14 @@ import org.hibernate.cfg.Configuration;
 public class HibernateUtil {
 
     public static SessionFactory buildSessionFactory() {
-        return new Configuration()
+        return buildConfiguration()
                 .configure()
-                .addAttributeConverter(BirthdayConverter.class)
-                .setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy())
                 .buildSessionFactory();
+    }
+
+    public static Configuration buildConfiguration() {
+        return new Configuration()
+                .addAttributeConverter(BirthdayConverter.class)
+                .setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
     }
 }

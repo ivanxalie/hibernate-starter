@@ -5,7 +5,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Cleanup;
 import org.example.entity.*;
-import org.example.util.HibernateUtil;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
@@ -18,11 +17,34 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.example.util.HibernateTestUtil.buildSessionFactory;
+
 class HibernateRunnerTest {
 
     @Test
+    void checkTestContainers() {
+        try (var factory = buildSessionFactory();
+             var session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            Company newCompany = Company.builder()
+                    .name("Google")
+                    .build();
+            newCompany.getLocales().put("ru", "Описание на русском");
+            newCompany.getLocales().put("en", "Description in English");
+            session.persist(newCompany);
+
+            Company company = session.find(Company.class, newCompany.getId());
+
+            System.out.println(company);
+
+            transaction.commit();
+        }
+    }
+
+    @Test
     void sortByUsername() {
-        try (var factory = HibernateUtil.buildSessionFactory();
+        try (var factory = buildSessionFactory();
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -36,7 +58,7 @@ class HibernateRunnerTest {
 
     @Test
     void localeInfo() {
-        try (var factory = HibernateUtil.buildSessionFactory();
+        try (var factory = buildSessionFactory();
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -52,7 +74,7 @@ class HibernateRunnerTest {
 
     @Test
     void checkManyToMany() {
-        try (var factory = HibernateUtil.buildSessionFactory();
+        try (var factory = buildSessionFactory();
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -75,7 +97,7 @@ class HibernateRunnerTest {
 
     @Test
     void checkOneToOne() {
-        try (var factory = HibernateUtil.buildSessionFactory();
+        try (var factory = buildSessionFactory();
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -101,7 +123,7 @@ class HibernateRunnerTest {
 
     @Test
     void checkOrphanRemove() {
-        try (var factory = HibernateUtil.buildSessionFactory();
+        try (var factory = buildSessionFactory();
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -115,7 +137,7 @@ class HibernateRunnerTest {
     @Test
     void checkLazyInitialisation() {
         Company company;
-        try (var factory = HibernateUtil.buildSessionFactory();
+        try (var factory = buildSessionFactory();
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
@@ -127,7 +149,7 @@ class HibernateRunnerTest {
 
     @Test
     void deleteCompany() {
-        @Cleanup var factory = HibernateUtil.buildSessionFactory();
+        @Cleanup var factory = buildSessionFactory();
         @Cleanup var session = factory.openSession();
 
         Transaction transaction = session.beginTransaction();
@@ -140,7 +162,7 @@ class HibernateRunnerTest {
 
     @Test
     void addUserToNewCompany() {
-        @Cleanup var factory = HibernateUtil.buildSessionFactory();
+        @Cleanup var factory = buildSessionFactory();
         @Cleanup var session = factory.openSession();
 
         Transaction transaction = session.beginTransaction();
@@ -162,7 +184,7 @@ class HibernateRunnerTest {
 
     @Test
     void oneToMany() {
-        @Cleanup var factory = HibernateUtil.buildSessionFactory();
+        @Cleanup var factory = buildSessionFactory();
         @Cleanup var session = factory.openSession();
 
         Transaction transaction = session.beginTransaction();
