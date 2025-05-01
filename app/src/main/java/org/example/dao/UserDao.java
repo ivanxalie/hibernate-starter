@@ -46,7 +46,13 @@ public class UserDao {
 
     public List<Payment> findAllPaymentsByCompanyName(Session session, String companyName) {
         return session
-                .createQuery("select p from Payment p where p.receiver.company.name = :companyName", Payment.class)
+                .createQuery("""
+                                select p\s
+                                from Payment p\s
+                                where p.receiver.company.name = :companyName\s
+                                order by p.receiver.personalInfo.firstName, p.amount
+                                """,
+                        Payment.class)
                 .setParameter("companyName", companyName)
                 .list();
     }
@@ -72,7 +78,7 @@ public class UserDao {
                 .createQuery("""
                         select p.receiver.company.name, avg(p.amount)\s
                                 from Payment p\s
-                                group by p.receiver.company.name
+                                group by p.receiver.company.name\s
                                 order by 1
                         """, Object[].class)
                 .list();
@@ -81,11 +87,12 @@ public class UserDao {
     public List<Object[]> isItPossible(Session session) {
         return session
                 .createQuery("""
-                        select p.receiver, avg(p.amount)\s
-                                from Payment p\s
-                                group by p.receiver
-                                order by 2 desc
-                                limit 2
+                        select u, avg(p.amount)
+                        from User u
+                        join u.payments p
+                        group by u
+                        having avg(p.amount) > (select avg(p.amount) from Payment p)
+                        order by u.personalInfo.firstName
                         """, Object[].class)
                 .list();
     }
