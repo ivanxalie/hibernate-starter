@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Cleanup;
 import org.example.entity.*;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
@@ -15,6 +16,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.example.util.HibernateTestUtil.buildSessionFactory;
@@ -22,11 +25,24 @@ import static org.example.util.HibernateTestUtil.buildSessionFactory;
 class HibernateRunnerTest {
 
     @Test
-    void checkTestContainers() {
+    void checkHql() {
+        execute(session -> {
+
+        });
+    }
+
+    private void execute(Consumer<Session> businessLogic) {
         try (var factory = buildSessionFactory();
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
+            businessLogic.accept(session);
+            transaction.commit();
+        }
+    }
 
+    @Test
+    void checkTestContainers() {
+        execute(session -> {
             Company google = Company.builder()
                     .name("Google")
                     .build();
@@ -55,47 +71,32 @@ class HibernateRunnerTest {
 
             System.out.println(savedProgrammer);
             System.out.println(savedManager);
-
-            transaction.commit();
-        }
+        });
     }
 
     @Test
     void sortByUsername() {
-        try (var factory = buildSessionFactory();
-             var session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
+        execute(session -> {
             Company company = session.find(Company.class, 18);
 
             company.getLocales().forEach((key, value) -> System.out.printf("%s:%s%n", key, value));
-
-            transaction.commit();
-        }
+        });
     }
 
     @Test
     void localeInfo() {
-        try (var factory = buildSessionFactory();
-             var session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
+        execute(session -> {
             Company company = session.find(Company.class, 16);
 //            company.getLocales().add(LocaleInfo.of("ru", "Описание на русском"));
 //            company.getLocales().add(LocaleInfo.of("en", "English description"));
 
             company.getLocales().entrySet().forEach(System.out::println);
-
-            transaction.commit();
-        }
+        });
     }
 
     @Test
     void checkManyToMany() {
-        try (var factory = buildSessionFactory();
-             var session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
+        execute(session -> {
             User user = session.find(User.class, 124L);
             Chat chat = session.find(Chat.class, 1L);
 
@@ -108,18 +109,13 @@ class HibernateRunnerTest {
             userChat.setUser(user);
 
             session.persist(userChat);
-
-            transaction.commit();
-        }
+        });
     }
 
     @Test
     void checkOneToOne() {
-        try (var factory = buildSessionFactory();
-             var session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
-//            var user = User.builder()
+        execute(session -> {
+            //            var user = User.builder()
 //                    .username("test3@gmail.com")
 //                    .build();
 //
@@ -134,35 +130,24 @@ class HibernateRunnerTest {
 
             User user = session.find(User.class, 124L);
             System.out.println(user);
-
-            transaction.commit();
-        }
+        });
     }
 
     @Test
     void checkOrphanRemove() {
-        try (var factory = buildSessionFactory();
-             var session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
+        execute(session -> {
             var company = session.getReference(Company.class, 16);
             company.getUsers().entrySet().removeIf(user -> user.getValue().getId() == 30L);
-
-            transaction.commit();
-        }
+        });
     }
 
     @Test
     void checkLazyInitialisation() {
-        Company company;
-        try (var factory = buildSessionFactory();
-             var session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
-            company = session.getReference(Company.class, 15);
-            transaction.commit();
-        }
-        System.out.println(company.getUsers());
+        AtomicReference<Company> company = new AtomicReference<>();
+        execute(session -> {
+            company.set(session.getReference(Company.class, 15));
+        });
+        System.out.println(company.get().getUsers());
     }
 
     @Test
