@@ -4,7 +4,9 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.*;
+import org.example.entity.Company;
+import org.example.entity.PersonalInfo;
+import org.example.entity.Programmer;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,11 +46,11 @@ public class HibernateRunner {
                     .personalInfo(PersonalInfo.builder()
                             .firstName("Alex" + ThreadLocalRandom.current().nextLong())
                             .lastName("Alex" + ThreadLocalRandom.current().nextLong())
-                            .birthDate(new Birthday(LocalDate.of(
+                            .birthDate(LocalDate.of(
                                     ThreadLocalRandom.current().nextInt(1950, 2005),
                                     ThreadLocalRandom.current().nextInt(1, 12),
                                     ThreadLocalRandom.current().nextInt(1, 20)
-                            )))
+                            ))
                             .build())
                     .build());
         }

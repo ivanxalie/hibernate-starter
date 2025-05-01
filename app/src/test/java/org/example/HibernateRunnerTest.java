@@ -1,12 +1,10 @@
 package org.example;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.FlushModeType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Cleanup;
 import org.example.entity.*;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.jpa.AvailableHints;
@@ -215,7 +213,7 @@ class HibernateRunnerTest {
                 .personalInfo(PersonalInfo.builder()
                         .firstName("Alex")
                         .lastName("Alex")
-                        .birthDate(new Birthday(LocalDate.of(1992, Month.APRIL, 12)))
+                        .birthDate(LocalDate.of(1992, Month.APRIL, 12))
                         .build())
                 .build();
 

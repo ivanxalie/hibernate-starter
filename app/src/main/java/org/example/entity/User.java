@@ -19,13 +19,13 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuperBuilder
 @NamedQuery(name = "findUserByName", query = """
-select u
-                                        from User u
-                                        left join u.company c
-                                        where u.personalInfo.firstName = :firstName
-                                        and c.name = :companyName
-                                        order by u.personalInfo.lastName desc
-""")
+        select u
+                                                from User u
+                                                left join u.company c
+                                                where u.personalInfo.firstName = :firstName
+                                                and c.name = :companyName
+                                                order by u.personalInfo.lastName desc
+        """)
 public class User implements Comparable<User>, BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,8 +59,16 @@ public class User implements Comparable<User>, BaseEntity<Long> {
     @Builder.Default
     private List<UserChat> userChats = new ArrayList<>();
 
+    @OneToMany(mappedBy = "receiver")
+    @Builder.Default
+    private List<Payment> payments = new ArrayList<>();
+
     @Override
     public int compareTo(User o) {
         return o.id.compareTo(id);
+    }
+
+    public String fullName() {
+        return String.format("%s %s", getPersonalInfo().getFirstName(), getPersonalInfo().getLastName());
     }
 }
