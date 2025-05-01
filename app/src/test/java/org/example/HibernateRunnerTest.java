@@ -1,12 +1,15 @@
 package org.example;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.FlushModeType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Cleanup;
 import org.example.entity.*;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.jpa.AvailableHints;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 
@@ -28,19 +31,13 @@ class HibernateRunnerTest {
     void checkHql() {
         execute(session ->
                 session
-                        .createQuery(
-                                """
-                                        select u
-                                        from User u
-                                        left join u.company c
-                                        where u.personalInfo.firstName = :firstName
-                                        and c.name = :companyName
-                                        order by u.personalInfo.lastName desc
-                                        """,
+                        .createNamedQuery(
+                                "findUserByName",
                                 User.class
                         )
                         .setParameter("firstName", "ivan")
                         .setParameter("companyName", "Google")
+                        .setHint(AvailableHints.HINT_BATCH_FETCH_SIZE, "50")
                         .list().forEach(System.out::println));
     }
 

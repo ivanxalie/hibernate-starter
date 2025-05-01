@@ -18,6 +18,14 @@ import java.util.List;
 @ToString(exclude = {"company", "profile", "userChats"})
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuperBuilder
+@NamedQuery(name = "findUserByName", query = """
+select u
+                                        from User u
+                                        left join u.company c
+                                        where u.personalInfo.firstName = :firstName
+                                        and c.name = :companyName
+                                        order by u.personalInfo.lastName desc
+""")
 public class User implements Comparable<User>, BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
