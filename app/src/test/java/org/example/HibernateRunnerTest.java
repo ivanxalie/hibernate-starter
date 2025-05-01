@@ -27,16 +27,34 @@ class HibernateRunnerTest {
              var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            Company newCompany = Company.builder()
+            Company google = Company.builder()
                     .name("Google")
                     .build();
-            newCompany.getLocales().put("ru", "Описание на русском");
-            newCompany.getLocales().put("en", "Description in English");
-            session.persist(newCompany);
 
-            Company company = session.find(Company.class, newCompany.getId());
+            session.persist(google);
 
-            System.out.println(company);
+            Programmer programmer = Programmer.builder()
+                    .username("ivan@gmail.com")
+                    .language(Language.JAVA)
+                    .company(google)
+                    .build();
+            session.persist(programmer);
+
+            Manager manager = Manager.builder()
+                    .username("sveta@gmail.com")
+                    .projectName("Starter")
+                    .company(google)
+                    .build();
+            session.persist(manager);
+            session.flush();
+
+            session.clear();
+
+            var savedProgrammer = session.find(Programmer.class, 1L);
+            var savedManager = session.find(User.class, 2L);
+
+            System.out.println(savedProgrammer);
+            System.out.println(savedManager);
 
             transaction.commit();
         }
@@ -171,7 +189,7 @@ class HibernateRunnerTest {
                 .name("Facebook")
                 .build();
 
-        var user = User.builder()
+        var user = Manager.builder()
                 .username("albina@gmail.com")
                 .build();
 
@@ -197,7 +215,7 @@ class HibernateRunnerTest {
 
     @Test
     void checkReflectionApi() {
-        User user = User.builder()
+        User user = Manager.builder()
                 .username("Alex")
                 .personalInfo(PersonalInfo.builder()
                         .firstName("Alex")

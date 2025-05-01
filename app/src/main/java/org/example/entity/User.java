@@ -2,22 +2,23 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = {"company", "profile", "userChats"})
-public class User implements Comparable<User> {
+@Inheritance(strategy = InheritanceType.JOINED)
+@SuperBuilder
+public class User implements Comparable<User>, BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,8 +43,7 @@ public class User implements Comparable<User> {
     @OneToOne
             (mappedBy = "user",
                     cascade = CascadeType.ALL,
-                    fetch = FetchType.LAZY,
-                    optional = false
+                    fetch = FetchType.LAZY
             )
     private Profile profile;
 

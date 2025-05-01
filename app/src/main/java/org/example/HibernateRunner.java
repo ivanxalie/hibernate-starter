@@ -39,7 +39,7 @@ public class HibernateRunner {
 
     private static void createRandomUser(Company company, int users) {
         for (int i = 0; i < users; i++) {
-            company.addUser(User.builder()
+            company.addUser(Programmer.builder()
                     .username("username-" + ThreadLocalRandom.current().nextLong())
                     .personalInfo(PersonalInfo.builder()
                             .firstName("Alex" + ThreadLocalRandom.current().nextLong())

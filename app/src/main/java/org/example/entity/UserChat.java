@@ -1,20 +1,16 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
-import java.time.Instant;
-
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Table(name = "users_chat")
-public class UserChat {
+@SuperBuilder
+public class UserChat extends AuditableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,9 +20,6 @@ public class UserChat {
 
     @ManyToOne
     private Chat chat;
-
-    private Instant createdAt;
-    private String createdBy;
 
     public void setUser(User user) {
         this.user = user;

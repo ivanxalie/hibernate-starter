@@ -12,10 +12,12 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">validate</property>
 
-        <mapping class="org.example.entity.User" />
-        <mapping class="org.example.entity.Company" />
-        <mapping class="org.example.entity.Profile" />
-        <mapping class="org.example.entity.Chat" />
-        <mapping class="org.example.entity.UserChat" />
+        <mapping class="org.example.entity.User"/>
+        <mapping class="org.example.entity.Company"/>
+        <mapping class="org.example.entity.Profile"/>
+        <mapping class="org.example.entity.Chat"/>
+        <mapping class="org.example.entity.UserChat"/>
+        <mapping class="org.example.entity.Programmer"/>
+        <mapping class="org.example.entity.Manager"/>
     </session-factory>
 </hibernate-configuration>
