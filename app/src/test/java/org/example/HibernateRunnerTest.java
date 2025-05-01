@@ -26,9 +26,22 @@ class HibernateRunnerTest {
 
     @Test
     void checkHql() {
-        execute(session -> {
-
-        });
+        execute(session ->
+                session
+                        .createQuery(
+                                """
+                                        select u
+                                        from User u
+                                        left join u.company c
+                                        where u.personalInfo.firstName = :firstName
+                                        and c.name = :companyName
+                                        order by u.personalInfo.lastName desc
+                                        """,
+                                User.class
+                        )
+                        .setParameter("firstName", "ivan")
+                        .setParameter("companyName", "Google")
+                        .list().forEach(System.out::println));
     }
 
     private void execute(Consumer<Session> businessLogic) {
