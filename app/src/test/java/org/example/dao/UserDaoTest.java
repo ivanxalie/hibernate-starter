@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserDaoTest {
     private final SessionFactory factory = HibernateTestUtil.buildSessionFactory();
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao = UserDaoHql.getInstance();
 
     @BeforeAll
     public void initDb() {
@@ -40,7 +40,8 @@ public class UserDaoTest {
             assertThat(users).isNotNull().hasSize(5);
 
             List<String> fullNames = users.stream().map(User::fullName).toList();
-            assertThat(fullNames).containsExactlyInAnyOrder("Bill Gates", "Steve Jobs", "Sergey Brin", "Tim Cook", "Diane Greene");
+            assertThat(fullNames).containsExactlyInAnyOrder(
+                    "Bill Gates", "Steve Jobs", "Sergey Brin", "Tim Cook", "Diane Greene");
         });
     }
 
