@@ -1,10 +1,15 @@
 package org.example.dao;
 
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.example.dtp.CompanyDto;
 import org.example.entity.*;
 import org.hibernate.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -48,9 +53,13 @@ public class UserDaoCriteriaApi implements UserDao {
     public List<User> findAllByCompanyName(Session session, String companyName) {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(User.class);
-        var user = criteria.from(User.class);
-        var companyNamePath = user.get(User_.company).get(Company_.name);
-        criteria.select(user).where(cb.equal(companyNamePath, companyName));
+        var company = criteria.from(Company.class);
+        var users = company.join(Company_.users);
+
+        criteria.select(users).where(
+                cb.equal(company.get(Company_.name), companyName)
+        );
+
         return session.createQuery(criteria).list();
     }
 
@@ -59,66 +68,95 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(Payment.class);
         var payment = criteria.from(Payment.class);
-        var companyNamePath = payment.get(Payment_.receiver).get(User_.company).get(Company_.name);
-        criteria.select(payment).where(cb.equal(companyNamePath, companyName));
+        var user = payment.join(Payment_.receiver);
+        var company = user.join(User_.company);
+
+        criteria.select(payment).where(
+                cb.equal(company.get(Company_.name), companyName)
+        ).orderBy(
+                cb.asc(user.get(User_.personalInfo).get(PersonalInfo_.firstName)),
+                cb.asc(payment.get(Payment_.amount))
+        );
+
         return session.createQuery(criteria).list();
     }
 
     @Override
-    public Double findAveragePaymentAmountByFirstAndLastName(Session session, String firstName, String lastName) {
+    public Double findAveragePaymentAmountByFirstAndLastNames(Session session, String firstName, String lastName) {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(Double.class);
         var payment = criteria.from(Payment.class);
-        var firstNamePath = payment.get(Payment_.receiver).get(User_.personalInfo).get(PersonalInfo_.firstName);
-        var lastNamePath = payment.get(Payment_.receiver).get(User_.personalInfo).get(PersonalInfo_.lastName);
-        var predicate = cb.and(
-                cb.equal(firstNamePath, firstName),
-                cb.equal(lastNamePath, lastName)
-        );
-        criteria.select(cb.avg(payment.get(Payment_.amount))).where(predicate);
+        var user = payment.join(Payment_.receiver);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (firstName != null)
+            predicates.add(cb.equal(user.get(User_.personalInfo).get(PersonalInfo_.firstName), firstName));
+        if (lastName != null)
+            predicates.add(cb.equal(user.get(User_.personalInfo).get(PersonalInfo_.lastName), lastName));
+
+        criteria
+                .select(cb.avg(payment.get(Payment_.amount)))
+                .where(predicates.toArray(Predicate[]::new));
 
         return session.createQuery(criteria).uniqueResult();
     }
 
     @Override
-    public List<Object[]> findCompanyNamesWithAvgUserPaymentsOrderedByCompanyName(Session session) {
+    public List<CompanyDto> findCompanyNamesWithAvgUserPaymentsOrderedByCompanyNameDto(Session session) {
         var cb = session.getCriteriaBuilder();
-        var criteria = cb.createQuery(Object[].class);
-        var payment = criteria.from(Payment.class);
-        var companyNamePath = payment.get(Payment_.receiver).get(User_.company).get(Company_.name);
+        var criteria = cb.createQuery(CompanyDto.class);
+        var company = criteria.from(Company.class);
+        var user = company.join(Company_.users, JoinType.INNER);
+        var payment = user.join(User_.payments);
 
         criteria
-                .multiselect(companyNamePath, cb.avg(payment.get(Payment_.amount)))
-                .orderBy(cb.asc(companyNamePath))
-                .groupBy(companyNamePath);
+                .select(
+                        cb.construct(CompanyDto.class,
+                                company.get(Company_.name), cb.avg(payment.get(Payment_.amount))
+                        ))
+                .groupBy(company.get(Company_.name))
+                .orderBy(cb.asc(company.get(Company_.name)));
 
         return session.createQuery(criteria).list();
     }
 
     @Override
-    public List<Object[]> isItPossible(Session session) {
+    public List<Tuple> isItPossibleTuple(Session session) {
         var cb = session.getCriteriaBuilder();
-        var criteria = cb.createQuery(Object[].class);
+        var criteria = cb.createTupleQuery();
 
+// FROM User
         var user = criteria.from(User.class);
-        var payments = user.join(User_.payments);
 
+// JOIN payments
+        var payments = user.join("payments");
+
+// Подзапрос со средним значением по всем
         var subquery = criteria.subquery(Double.class);
-        var subqueryPayment = subquery.from(Payment.class);
-        subquery.select(cb.avg(subqueryPayment.get(Payment_.amount)));
+        var subRoot = subquery.from(Payment.class);
+        subquery.select(cb.avg(subRoot.get("amount")));
 
-        var avg = cb.avg(payments.get(Payment_.amount));
+// AVG по текущему пользователю
+        var avgAmount = cb.avg(payments.get("amount"));
 
-        var having = cb.greaterThan(avg, subquery);
+// HAVING avg(user) > avg(all)
+        Predicate having = cb.greaterThan(avgAmount, subquery);
 
-        var firstNamePath = user.get(User_.personalInfo).get(PersonalInfo_.firstName);
+// Сортировка по embedded полю
+        var firstNamePath = user.get("personalInfo").get("firstName");
 
+// ⚠️ Добавь alias-ы, иначе Tuple — это просто Object[] с шапкой
         criteria
-                .multiselect(user, avg)
+                .multiselect(
+                        user.alias("user"),
+                        avgAmount.alias("avgAmount")
+                )
                 .groupBy(user)
                 .having(having)
                 .orderBy(cb.asc(firstNamePath));
 
-        return session.createQuery(criteria).list();
+// Выполнение
+        return session.createQuery(criteria).getResultList();
     }
 }

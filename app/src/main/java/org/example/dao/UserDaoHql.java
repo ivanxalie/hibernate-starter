@@ -57,7 +57,7 @@ public class UserDaoHql implements UserDao {
                 .list();
     }
 
-    public Double findAveragePaymentAmountByFirstAndLastName(Session session, String firstName, String lastName) {
+    public Double findAveragePaymentAmountByFirstAndLastNames(Session session, String firstName, String lastName) {
         return session
                 .createQuery(
                         """
