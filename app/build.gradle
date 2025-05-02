@@ -25,6 +25,7 @@ dependencies {
     runtimeOnly(libs.postgres.driver)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
+    annotationProcessor(libs.jpamodelgen)
 
     testImplementation(libs.junit.api)
 //    testImplementation(libs.h2)

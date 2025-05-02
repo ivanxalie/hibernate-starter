@@ -26,3 +26,4 @@ slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf" }
 log4j-impl = { module = "org.slf4j:slf4j-log4j12", version.ref = "log_4j" }
 h2 = { module = "com.h2database:h2", version.ref = "h2_version" }
 testcontainers = { module = "org.testcontainers:postgresql", version.ref = "containers" }
+jpamodelgen = { module = "org.hibernate:hibernate-jpamodelgen", version.ref = "hibernate" }

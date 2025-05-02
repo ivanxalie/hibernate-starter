@@ -1,12 +1,9 @@
 package org.example.dao;
 
-import jakarta.persistence.criteria.Path;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.example.entity.Payment;
-import org.example.entity.User;
+import org.example.entity.*;
 import org.hibernate.Session;
-import org.hibernate.query.criteria.*;
 
 import java.util.List;
 
@@ -32,7 +29,7 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
-        Path<String> firstNamePath = user.get("personalInfo").get("firstName");
+        var firstNamePath = user.get(User_.personalInfo).get(PersonalInfo_.firstName);
         criteria.select(user).where(cb.equal(firstNamePath, firstName));
         return session.createQuery(criteria).list();
     }
@@ -42,7 +39,7 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
-        Path<String> birthDatePath = user.get("personalInfo").get("birthDate");
+        var birthDatePath = user.get(User_.personalInfo).get(PersonalInfo_.birthDate);
         criteria.select(user).fetch(limit).orderBy(cb.asc(birthDatePath));
         return session.createQuery(criteria).list();
     }
@@ -52,7 +49,7 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
-        Path<String> companyNamePath = user.get("company").get("name");
+        var companyNamePath = user.get(User_.company).get(Company_.name);
         criteria.select(user).where(cb.equal(companyNamePath, companyName));
         return session.createQuery(criteria).list();
     }
@@ -62,7 +59,7 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(Payment.class);
         var payment = criteria.from(Payment.class);
-        Path<String> companyNamePath = payment.get("receiver").get("company").get("name");
+        var companyNamePath = payment.get(Payment_.receiver).get(User_.company).get(Company_.name);
         criteria.select(payment).where(cb.equal(companyNamePath, companyName));
         return session.createQuery(criteria).list();
     }
@@ -72,13 +69,13 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(Double.class);
         var payment = criteria.from(Payment.class);
-        var firstNamePath = payment.get("receiver").get("personalInfo").get("firstName");
-        var lastNamePath = payment.get("receiver").get("personalInfo").get("lastName");
-        JpaPredicate predicate = cb.and(
+        var firstNamePath = payment.get(Payment_.receiver).get(User_.personalInfo).get(PersonalInfo_.firstName);
+        var lastNamePath = payment.get(Payment_.receiver).get(User_.personalInfo).get(PersonalInfo_.lastName);
+        var predicate = cb.and(
                 cb.equal(firstNamePath, firstName),
                 cb.equal(lastNamePath, lastName)
         );
-        criteria.select(cb.avg(payment.get("amount"))).where(predicate);
+        criteria.select(cb.avg(payment.get(Payment_.amount))).where(predicate);
 
         return session.createQuery(criteria).uniqueResult();
     }
@@ -88,10 +85,10 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(Object[].class);
         var payment = criteria.from(Payment.class);
-        Path<String> companyNamePath = payment.get("receiver").get("company").get("name");
+        var companyNamePath = payment.get(Payment_.receiver).get(User_.company).get(Company_.name);
 
         criteria
-                .multiselect(companyNamePath, cb.avg(payment.get("amount")))
+                .multiselect(companyNamePath, cb.avg(payment.get(Payment_.amount)))
                 .orderBy(cb.asc(companyNamePath))
                 .groupBy(companyNamePath);
 
@@ -103,18 +100,18 @@ public class UserDaoCriteriaApi implements UserDao {
         var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(Object[].class);
 
-        JpaRoot<User> user = criteria.from(User.class);
-        JpaJoin<User, Payment> payments = user.join("payments");
+        var user = criteria.from(User.class);
+        var payments = user.join(User_.payments);
 
-        JpaSubQuery<Double> subquery = criteria.subquery(Double.class);
-        JpaRoot<Payment> subqueryPayment = subquery.from(Payment.class);
-        subquery.select(cb.avg(subqueryPayment.get("amount")));
+        var subquery = criteria.subquery(Double.class);
+        var subqueryPayment = subquery.from(Payment.class);
+        subquery.select(cb.avg(subqueryPayment.get(Payment_.amount)));
 
-        JpaExpression<Double> avg = cb.avg(payments.get("amount"));
+        var avg = cb.avg(payments.get(Payment_.amount));
 
-        JpaPredicate having = cb.greaterThan(avg, subquery);
+        var having = cb.greaterThan(avg, subquery);
 
-        Path<String> firstNamePath = user.get("personalInfo").get("firstName");
+        var firstNamePath = user.get(User_.personalInfo).get(PersonalInfo_.firstName);
 
         criteria
                 .multiselect(user, avg)
