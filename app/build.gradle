@@ -58,7 +58,7 @@ querydsl {
 sourceSets {
     main {
         java {
-            srcDir queryDslSourceDirectory
+            srcDirs += queryDslSourceDirectory
         }
     }
 }
