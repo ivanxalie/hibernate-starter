@@ -12,7 +12,7 @@ plugins {
     id("com.ewerk.gradle.plugins.querydsl") version "1.0.10"
 }
 
-def queryDslSourceDirectory = "$buildDir/generated/sources/annotationProcessor/java/main"
+def queryDslSourceDirectory = "${layout.buildDirectory.get()}/generated/sources/annotationProcessor/java/main"
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -31,7 +31,12 @@ dependencies {
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
     annotationProcessor(libs.jpamodelgen)
-    annotationProcessor(libs.query.dsl.apt)
+    annotationProcessor(
+            group: "com.querydsl",
+            name: "querydsl-apt",
+            version: "5.1.0",
+            classifier: "jakarta"
+    )
     annotationProcessor(libs.jakarta.persistence.api)
 
     testImplementation(libs.junit.api)
@@ -63,7 +68,7 @@ compileQuerydsl {
 }
 
 configurations {
-    querydsl.extendsFrom compileClasspath
+    querydsl.extendsFrom compileOnly, implementation, runtimeOnly
 }
 
 test {
