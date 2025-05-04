@@ -67,6 +67,8 @@ compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
+compileQuerydsl.dependsOn(clean)
+
 configurations {
     querydsl.extendsFrom compileOnly, implementation, runtimeOnly
 }
