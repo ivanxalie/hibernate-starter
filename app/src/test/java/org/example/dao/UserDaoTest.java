@@ -1,8 +1,6 @@
 package org.example.dao;
 
-import jakarta.persistence.Tuple;
 import lombok.Cleanup;
-import org.example.dtp.CompanyDto;
 import org.example.entity.Payment;
 import org.example.entity.User;
 import org.example.util.HibernateTestUtil;
@@ -103,13 +101,13 @@ public class UserDaoTest {
     @Test
     void findCompanyNamesWithAvgUserPaymentsOrderedByCompanyName() {
         execute(session -> {
-            List<CompanyDto> result = userDao.findCompanyNamesWithAvgUserPaymentsOrderedByCompanyNameDto(session);
+            List<com.querydsl.core.Tuple> result = userDao.findCompanyNamesWithAvgUserPaymentsOrderedByCompanyNameTuple(session);
             assertThat(result).isNotNull().hasSize(3);
 
-            List<String> orgNames = result.stream().map(CompanyDto::getMame).toList();
+            List<String> orgNames = result.stream().map(it -> it.get(0, String.class)).toList();
             assertThat(orgNames).contains("Apple", "Google", "Microsoft");
 
-            List<Double> orgAvgPayments = result.stream().map(CompanyDto::getAmount).toList();
+            List<Double> orgAvgPayments = result.stream().map(it -> it.get(1, Double.class)).toList();
             assertThat(orgAvgPayments).contains(410.0, 400.0, 300.0);
         });
     }
@@ -117,13 +115,13 @@ public class UserDaoTest {
     @Test
     void isItPossible() {
         execute(session -> {
-            List<Tuple> result = userDao.isItPossibleTuple(session);
+            List<com.querydsl.core.Tuple> result = userDao.isItPossibleTupleQueryDsl(session);
             assertThat(result).isNotNull().hasSize(2);
 
-            List<String> names = result.stream().map(tuple -> tuple.get(0, User.class).fullName()).toList();
+            List<String> names = result.stream().map(it -> it.get(0, User.class).fullName()).toList();
             assertThat(names).contains("Sergey Brin", "Steve Jobs");
 
-            List<Double> averagePayments = result.stream().map(tuple -> tuple.get(1, Double.class)).toList();
+            List<Double> averagePayments = result.stream().map(it -> it.get(1, Double.class)).toList();
             assertThat(averagePayments).contains(500.0, 450.0);
         });
     }

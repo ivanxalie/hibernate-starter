@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.hibernate.Session;
 
 import java.util.List;
 
+import static org.example.entity.QCompany.company;
 import static org.example.entity.QPayment.payment;
 import static org.example.entity.QUser.user;
 
@@ -62,6 +64,7 @@ public class UserDaoQueryDsl implements UserDao {
                 .select(payment)
                 .from(payment)
                 .where(payment.receiver.company.name.eq(companyName))
+                .orderBy(payment.receiver.personalInfo.firstName.asc(), payment.amount.asc())
                 .fetch();
     }
 
@@ -76,5 +79,33 @@ public class UserDaoQueryDsl implements UserDao {
                 )
                 .groupBy(payment.receiver.id)
                 .fetchOne();
+    }
+
+    @Override
+    public List<Tuple> findCompanyNamesWithAvgUserPaymentsOrderedByCompanyNameTuple(Session session) {
+        return new JPAQuery<Tuple>(session)
+                .select(company.name, payment.amount.avg())
+                .from(company)
+                .join(company.users, user)
+                .join(user.payments, payment)
+                .groupBy(company.name)
+                .orderBy(company.name.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<Tuple> isItPossibleTupleQueryDsl(Session session) {
+        return new JPAQuery<Tuple>(session)
+                .select(user, payment.amount.avg())
+                .from(user)
+                .join(user.payments, payment)
+                .groupBy(user)
+                .having(payment.amount.avg().gt(
+                        new JPAQuery<Double>(session)
+                                .select(payment.amount.avg())
+                                .from(payment)
+                ))
+                .orderBy(user.personalInfo.firstName.asc())
+                .fetch();
     }
 }

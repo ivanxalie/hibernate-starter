@@ -30,11 +30,19 @@ public interface UserDao {
         return Collections.emptyList();
     }
 
+    default List<com.querydsl.core.Tuple> findCompanyNamesWithAvgUserPaymentsOrderedByCompanyNameTuple(Session session) {
+        return Collections.emptyList();
+    }
+
     default List<Object[]> isItPossible(Session session) {
         return Collections.emptyList();
     }
 
     default List<Tuple> isItPossibleTuple(Session session) {
+        return Collections.emptyList();
+    }
+
+    default List<com.querydsl.core.Tuple> isItPossibleTupleQueryDsl(Session session) {
         return Collections.emptyList();
     }
 }
