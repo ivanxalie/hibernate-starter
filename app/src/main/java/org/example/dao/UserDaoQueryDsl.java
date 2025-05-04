@@ -20,7 +20,10 @@ public class UserDaoQueryDsl implements UserDao {
 
     @Override
     public List<User> findAll(Session session) {
-        return new JPAQuery<User>(session).select(QUser.user).fetch();
+        return new JPAQuery<User>(session)
+                .select(QUser.user)
+                .from(QUser.user)
+                .fetch();
     }
 
     @Override
