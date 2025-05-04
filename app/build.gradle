@@ -25,7 +25,12 @@ dependencies {
     implementation(libs.slf4j)
     implementation(libs.log4j.impl)
     implementation(libs.query.dsl.core)
-    implementation(libs.query.dsl.jpa)
+    implementation(
+            group: "com.querydsl",
+            name: "querydsl-jpa",
+            version: "5.1.0",
+            classifier: "jakarta"
+    )
 
     runtimeOnly(libs.postgres.driver)
     compileOnly(libs.lombok)
