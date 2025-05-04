@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.example.entity.Payment;
+import org.example.entity.QUser;
 import org.example.entity.User;
 import org.hibernate.Session;
 
@@ -19,7 +20,7 @@ public class UserDaoQueryDsl implements UserDao {
 
     @Override
     public List<User> findAll(Session session) {
-        return new JPAQuery<User>(session);
+        return new JPAQuery<User>(session).select(QUser.user).fetch();
     }
 
     @Override

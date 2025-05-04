@@ -75,7 +75,10 @@ compileQuerydsl {
 compileQuerydsl.dependsOn(clean)
 
 configurations {
-    querydsl.extendsFrom compileOnly, implementation, runtimeOnly
+    querydsl.extendsFrom implementation, runtimeOnly, compileOnly
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 test {
