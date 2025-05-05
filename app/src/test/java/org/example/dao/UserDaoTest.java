@@ -105,7 +105,8 @@ public class UserDaoTest {
     @Test
     void findCompanyNamesWithAvgUserPaymentsOrderedByCompanyName() {
         execute(session -> {
-            List<com.querydsl.core.Tuple> result = userDao.findCompanyNamesWithAvgUserPaymentsOrderedByCompanyNameTuple(session);
+            List<com.querydsl.core.Tuple> result = userDao
+                    .findCompanyNamesWithAvgUserPaymentsOrderedByCompanyNameTuple(session);
             assertThat(result).isNotNull().hasSize(3);
 
             List<String> orgNames = result.stream().map(it -> it.get(0, String.class)).toList();

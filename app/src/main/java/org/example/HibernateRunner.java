@@ -4,55 +4,18 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Company;
-import org.example.entity.PersonalInfo;
-import org.example.entity.Programmer;
 import org.example.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import java.time.LocalDate;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 @Slf4j
 public class HibernateRunner {
 
     public static void main(String[] args) {
-        Company company = Company.builder()
-                .name("Amazon")
-                .build();
+        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
 
-        try (SessionFactory factory = HibernateUtil.buildSessionFactory()) {
-            Session session1 = factory.openSession();
-            try (session1) {
-                Transaction transaction = session1.beginTransaction();
-//                session1.persist(company);
-//                session1.persist(user);
-                createRandomUser(company, 100);
-
-                session1.persist(company);
-
-                transaction.commit();
-            }
-        }
-    }
-
-    private static void createRandomUser(Company company, int users) {
-        for (int i = 0; i < users; i++) {
-            company.addUser(Programmer.builder()
-                    .username("username-" + ThreadLocalRandom.current().nextLong())
-                    .personalInfo(PersonalInfo.builder()
-                            .firstName("Alex" + ThreadLocalRandom.current().nextLong())
-                            .lastName("Alex" + ThreadLocalRandom.current().nextLong())
-                            .birthDate(LocalDate.of(
-                                    ThreadLocalRandom.current().nextInt(1950, 2005),
-                                    ThreadLocalRandom.current().nextInt(1, 12),
-                                    ThreadLocalRandom.current().nextInt(1, 20)
-                            ))
-                            .build())
-                    .build());
+            transaction.commit();
         }
     }
 }
