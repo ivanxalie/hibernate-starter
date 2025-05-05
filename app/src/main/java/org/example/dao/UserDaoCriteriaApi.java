@@ -5,7 +5,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.example.dtp.CompanyDto;
+import org.example.dto.CompanyDto;
 import org.example.entity.*;
 import org.hibernate.Session;
 

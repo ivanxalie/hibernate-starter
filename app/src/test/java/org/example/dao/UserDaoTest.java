@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import lombok.Cleanup;
+import org.example.dto.PaymentFilter;
 import org.example.entity.Payment;
 import org.example.entity.User;
 import org.example.util.HibernateTestUtil;
@@ -93,7 +94,10 @@ public class UserDaoTest {
     void findAveragePaymentAmountByFirstAndLastNames() {
         execute(session -> {
             Double averagePaymentAmount = userDao.findAveragePaymentAmountByFirstAndLastNames(session,
-                    "Bill", "Gates");
+                    PaymentFilter.builder()
+                            .firstName("Bill")
+                            .lastName("Gates")
+                            .build());
             assertThat(averagePaymentAmount).isNotNull().isEqualTo(300.0);
         });
     }

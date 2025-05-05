@@ -1,13 +1,16 @@
 package org.example.dao;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.example.dto.PaymentFilter;
 import org.example.entity.Payment;
 import org.example.entity.User;
 import org.hibernate.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.example.entity.QCompany.company;
@@ -69,14 +72,14 @@ public class UserDaoQueryDsl implements UserDao {
     }
 
     @Override
-    public Double findAveragePaymentAmountByFirstAndLastNames(Session session, String firstName, String lastName) {
+    public Double findAveragePaymentAmountByFirstAndLastNames(Session session, PaymentFilter filter) {
         return new JPAQuery<Double>(session)
                 .select(payment.amount.avg())
                 .from(payment)
-                .where(
-                        payment.receiver.personalInfo.firstName.eq(firstName),
-                        payment.receiver.personalInfo.lastName.eq(lastName)
-                )
+                .where(QPredicate.builder()
+                        .add(filter.getFirstName(), payment.receiver.personalInfo.firstName::eq)
+                        .add(filter.getLastName(), payment.receiver.personalInfo.lastName::eq)
+                        .buildAnd())
                 .groupBy(payment.receiver.id)
                 .fetchOne();
     }

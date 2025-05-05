@@ -1,4 +1,4 @@
-package org.example.dtp;
+package org.example.dto;
 
 
 import lombok.Value;

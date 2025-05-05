@@ -1,7 +1,8 @@
 package org.example.dao;
 
 import jakarta.persistence.Tuple;
-import org.example.dtp.CompanyDto;
+import org.example.dto.CompanyDto;
+import org.example.dto.PaymentFilter;
 import org.example.entity.Payment;
 import org.example.entity.User;
 import org.hibernate.Session;
@@ -20,7 +21,13 @@ public interface UserDao {
 
     List<Payment> findAllPaymentsByCompanyName(Session session, String companyName);
 
-    Double findAveragePaymentAmountByFirstAndLastNames(Session session, String firstName, String lastName);
+    default Double findAveragePaymentAmountByFirstAndLastNames(Session session, String firstName, String lastName) {
+        return 0.0;
+    }
+
+    default Double findAveragePaymentAmountByFirstAndLastNames(Session session, PaymentFilter filter) {
+        return 0.0;
+    }
 
     default List<Object[]> findCompanyNamesWithAvgUserPaymentsOrderedByCompanyName(Session session) {
         return Collections.emptyList();
