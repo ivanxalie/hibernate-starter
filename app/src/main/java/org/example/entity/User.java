@@ -3,11 +3,14 @@ package org.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -15,7 +18,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = {"company", "profile", "userChats"})
+@ToString(exclude = {"company",
+//        "profile",
+        "userChats",
+        "payments"})
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuperBuilder
 @NamedQuery(name = "findUserByName", query = """
@@ -48,11 +54,12 @@ public class User implements Comparable<User>, BaseEntity<Long> {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @OneToOne
-            (mappedBy = "user",
-                    cascade = CascadeType.ALL,
-                    fetch = FetchType.LAZY
-            )
+    //    @OneToOne
+//            (mappedBy = "user",
+//                    cascade = CascadeType.ALL,
+//                    fetch = FetchType.LAZY
+//            )
+    @Transient
     private Profile profile;
 
     @OneToMany(mappedBy = "user")
@@ -61,6 +68,7 @@ public class User implements Comparable<User>, BaseEntity<Long> {
 
     @OneToMany(mappedBy = "receiver")
     @Builder.Default
+    @BatchSize(size = 5)
     private List<Payment> payments = new ArrayList<>();
 
     @Override

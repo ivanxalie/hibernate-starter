@@ -1,8 +1,10 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = false)
@@ -10,6 +12,8 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "users_chat")
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserChat extends AuditableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

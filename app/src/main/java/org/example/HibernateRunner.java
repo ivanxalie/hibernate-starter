@@ -4,8 +4,11 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.entity.User;
 import org.example.util.HibernateUtil;
 import org.hibernate.Transaction;
+
+import java.util.List;
 
 
 @Slf4j
@@ -14,6 +17,14 @@ public class HibernateRunner {
     public static void main(String[] args) {
         try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
+
+//            User user = session.find(User.class, 1L);
+//            System.out.println(user.getPayments().size());
+//            System.out.println(user.getCompany().getName());
+
+            List<User> users = session.createQuery("select u from User u", User.class).list();
+            users.forEach(user -> System.out.println(user.getPayments().size()));
+            users.forEach(user -> System.out.println(user.getCompany().getName()));
 
             transaction.commit();
         }

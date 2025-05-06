@@ -2,6 +2,7 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.MapKeyJdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -15,6 +16,7 @@ import java.util.*;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "users")
+@BatchSize(size = 5)
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
