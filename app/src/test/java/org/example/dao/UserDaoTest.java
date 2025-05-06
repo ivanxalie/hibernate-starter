@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserDaoTest {
     private final SessionFactory factory = HibernateTestUtil.buildSessionFactory();
-    private final UserDao userDao = UserDaoQueryDsl.getInstance();
+    private final UserDao userDao = UserDaoCriteriaApi.getInstance();
 
     @BeforeAll
     public void initDb() {

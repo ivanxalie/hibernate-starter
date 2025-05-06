@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -52,6 +54,7 @@ public class User implements Comparable<User>, BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
+//    @Fetch(FetchMode.JOIN)
     private Company company;
 
     //    @OneToOne
@@ -68,7 +71,7 @@ public class User implements Comparable<User>, BaseEntity<Long> {
 
     @OneToMany(mappedBy = "receiver")
     @Builder.Default
-    @BatchSize(size = 5)
+//    @Fetch(FetchMode.SUBSELECT)
     private List<Payment> payments = new ArrayList<>();
 
     @Override

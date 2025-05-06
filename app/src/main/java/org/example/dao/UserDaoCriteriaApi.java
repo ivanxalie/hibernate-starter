@@ -69,6 +69,7 @@ public class UserDaoCriteriaApi implements UserDao {
         var criteria = cb.createQuery(Payment.class);
         var payment = criteria.from(Payment.class);
         var user = payment.join(Payment_.receiver);
+        payment.fetch(Payment_.receiver);
         var company = user.join(User_.company);
 
         criteria.select(payment).where(

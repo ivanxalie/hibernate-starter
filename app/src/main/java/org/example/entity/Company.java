@@ -16,7 +16,7 @@ import java.util.*;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "users")
-@BatchSize(size = 5)
+//@BatchSize(size = 5)
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
