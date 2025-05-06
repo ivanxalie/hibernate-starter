@@ -11,7 +11,8 @@ import org.hibernate.type.SqlTypes;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.example.entity.User.USER_PROFILE;
+import static org.example.entity.User.USER_COMPANY_AND_CHAT_ENTITY_GRAPH;
+import static org.example.entity.User.USER_COMPANY_AND_PAYMENTS_GRAPH;
 
 @Data
 @Entity
@@ -34,7 +35,7 @@ import static org.example.entity.User.USER_PROFILE;
                                                 order by u.personalInfo.lastName desc
         """)
 @FetchProfile(
-        name = USER_PROFILE,
+        name = USER_COMPANY_AND_PAYMENTS_GRAPH,
         fetchOverrides = {
                 @FetchProfile.FetchOverride(
                         entity = User.class,
@@ -48,8 +49,21 @@ import static org.example.entity.User.USER_PROFILE;
                 )
         }
 )
+@NamedEntityGraph(
+        name = USER_COMPANY_AND_CHAT_ENTITY_GRAPH,
+        attributeNodes = {
+                @NamedAttributeNode("company"),
+                @NamedAttributeNode(value = "userChats", subgraph = "chats")
+        },
+        subgraphs = {
+                @NamedSubgraph(name = "chats", attributeNodes = {
+                        @NamedAttributeNode("chat")
+                })
+        }
+)
 public class User implements Comparable<User>, BaseEntity<Long> {
-    public static final String USER_PROFILE = "withCompanyAndPayment";
+    public static final String USER_COMPANY_AND_PAYMENTS_GRAPH = "withCompanyAndPayment";
+    public static final String USER_COMPANY_AND_CHAT_ENTITY_GRAPH = "WithCompanyAndChat";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
