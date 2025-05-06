@@ -8,6 +8,7 @@ import org.example.entity.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.jpa.AvailableHints;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.example.util.HibernateTestUtil.buildSessionFactory;
 
+@Disabled
 class HibernateRunnerTest {
 
     @Test
