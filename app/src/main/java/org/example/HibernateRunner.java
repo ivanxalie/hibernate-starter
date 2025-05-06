@@ -8,7 +8,7 @@ import org.example.entity.User;
 import org.example.util.HibernateUtil;
 import org.hibernate.Transaction;
 
-import java.util.List;
+import static org.example.entity.User.USER_PROFILE;
 
 
 @Slf4j
@@ -17,17 +17,18 @@ public class HibernateRunner {
     public static void main(String[] args) {
         try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
+            session.enableFetchProfile(USER_PROFILE);
+            User user = session.find(User.class, 1L);
+            System.out.println(user.getPayments().size());
+            System.out.println(user.getCompany().getName());
 
-//            User user = session.find(User.class, 1L);
-//            System.out.println(user.getPayments().size());
-//            System.out.println(user.getCompany().getName());
+//            List<User> users = session.createQuery(
+//                            "select u from User u join fetch u.payments join fetch u.company",
+//                            User.class)
+//                    .list();
+//            users.forEach(user -> System.out.println(user.getPayments().size()));
+//            users.forEach(user -> System.out.println(user.getCompany().getName()));
 
-            List<User> users = session.createQuery(
-                            "select u from User u join fetch u.payments join fetch u.company",
-                            User.class)
-                    .list();
-            users.forEach(user -> System.out.println(user.getPayments().size()));
-            users.forEach(user -> System.out.println(user.getCompany().getName()));
 
             transaction.commit();
         }

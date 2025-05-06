@@ -3,16 +3,15 @@ package org.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import static org.example.entity.User.USER_PROFILE;
 
 @Data
 @Entity
@@ -34,7 +33,24 @@ import java.util.Set;
                                                 and c.name = :companyName
                                                 order by u.personalInfo.lastName desc
         """)
+@FetchProfile(
+        name = USER_PROFILE,
+        fetchOverrides = {
+                @FetchProfile.FetchOverride(
+                        entity = User.class,
+                        association = "company",
+                        mode = FetchMode.JOIN
+                ),
+                @FetchProfile.FetchOverride(
+                        entity = User.class,
+                        association = "payments",
+                        mode = FetchMode.JOIN
+                )
+        }
+)
 public class User implements Comparable<User>, BaseEntity<Long> {
+    public static final String USER_PROFILE = "withCompanyAndPayment";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
