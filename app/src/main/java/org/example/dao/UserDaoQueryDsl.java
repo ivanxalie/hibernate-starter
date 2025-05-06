@@ -1,7 +1,6 @@
 package org.example.dao;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,6 @@ import org.example.entity.Payment;
 import org.example.entity.User;
 import org.hibernate.Session;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.example.entity.QCompany.company;
@@ -66,8 +64,10 @@ public class UserDaoQueryDsl implements UserDao {
         return new JPAQuery<Payment>(session)
                 .select(payment)
                 .from(payment)
-                .where(payment.receiver.company.name.eq(companyName))
-                .orderBy(payment.receiver.personalInfo.firstName.asc(), payment.amount.asc())
+                .join(payment.receiver, user).fetchJoin()
+                .join(user.company, company)
+                .where(company.name.eq(companyName))
+                .orderBy(user.personalInfo.firstName.asc(), payment.amount.asc())
                 .fetch();
     }
 
