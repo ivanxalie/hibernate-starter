@@ -6,16 +6,14 @@ import org.example.entity.AuditableEntity;
 
 import java.time.Instant;
 
-public class AuditListener {
+public class AuditDatesListener {
     @PrePersist
     public void prePersist(AuditableEntity<?> entity) {
         entity.setCreatedAt(Instant.now());
-        entity.setCreatedBy("ME!!!");
     }
 
     @PreUpdate
     public void preUpdate(AuditableEntity<?> entity) {
         entity.setUpdatedAt(Instant.now());
-        entity.setUpdatedBy("ME!!!!!!!!!!!!!!!!!");
     }
 }

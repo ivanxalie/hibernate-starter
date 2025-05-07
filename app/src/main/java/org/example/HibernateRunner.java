@@ -18,8 +18,7 @@ public class HibernateRunner {
             TestDataImporter.importData(factory);
             Transaction transaction = session.beginTransaction();
             Payment payment = session.find(Payment.class, 1L);
-            payment.setAmount(payment.getAmount() + 100);
-
+            session.remove(payment);
             transaction.commit();
         }
     }
