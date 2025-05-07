@@ -3,51 +3,30 @@
  */
 package org.example;
 
+import jakarta.persistence.LockModeType;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.User;
-import org.example.entity.UserChat;
+import org.example.entity.Payment;
 import org.example.util.HibernateUtil;
 import org.hibernate.Transaction;
-import org.hibernate.graph.GraphSemantic;
-import org.hibernate.graph.SubGraph;
-
-import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
 public class HibernateRunner {
 
     public static void main(String[] args) {
-        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession()) {
+        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession();
+             var session1 = factory.openSession()) {
             Transaction transaction = session.beginTransaction();
-//            session.enableFetchProfile(USER_COMPANY_AND_PAYMENTS_GRAPH);
+            Transaction transaction1 = session1.beginTransaction();
 
-            var userGraph = session.createEntityGraph(User.class);
-            userGraph.addAttributeNodes("company", "userChats");
-            SubGraph<UserChat> userChats = userGraph.addSubgraph("userChats", UserChat.class);
-            userChats.addAttributeNodes("chat");
+            Payment payment = session.find(Payment.class, 1L);
+            payment.setAmount(payment.getAmount() + 10);
 
-            User user = session.find(User.class, 1L, Map.of(GraphSemantic.LOAD.getJakartaHintName(),
-//                    session.getEntityGraph(USER_COMPANY_AND_CHAT_ENTITY_GRAPH)
-                    userGraph
-            ));
-            System.out.println(user.getUserChats().size());
-            System.out.println(user.getCompany().getName());
-
-            List<User> users = session.createQuery(
-                            "select u from User u",
-                            User.class)
-                    .setHint(GraphSemantic.LOAD.getJakartaHintName(),
-//                            session.getEntityGraph(USER_COMPANY_AND_CHAT_ENTITY_GRAPH)
-                            userGraph
-                    )
-                    .list();
-            users.forEach(it -> System.out.println(it.getUserChats().size()));
-            users.forEach(it -> System.out.println(it.getCompany().getName()));
-
+            Payment payment1 = session1.find(Payment.class, 1L);
+            payment1.setAmount(payment1.getAmount() + 20);
 
             transaction.commit();
+            transaction1.commit();
         }
     }
 }
