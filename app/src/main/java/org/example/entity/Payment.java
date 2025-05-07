@@ -2,7 +2,6 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @NoArgsConstructor
@@ -10,8 +9,9 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @Entity
 @ToString(exclude = "receiver")
-@DynamicUpdate
-public class Payment implements BaseEntity<Long> {
+@EqualsAndHashCode(callSuper = true)
+//@DynamicUpdate
+public class Payment extends AuditableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

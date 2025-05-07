@@ -3,10 +3,10 @@
  */
 package org.example;
 
-import jakarta.persistence.LockModeType;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.Payment;
 import org.example.util.HibernateUtil;
+import org.example.util.TestDataImporter;
 import org.hibernate.Transaction;
 
 
@@ -14,19 +14,13 @@ import org.hibernate.Transaction;
 public class HibernateRunner {
 
     public static void main(String[] args) {
-        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession();
-             var session1 = factory.openSession()) {
+        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession()) {
+            TestDataImporter.importData(factory);
             Transaction transaction = session.beginTransaction();
-            Transaction transaction1 = session1.beginTransaction();
-
             Payment payment = session.find(Payment.class, 1L);
-            payment.setAmount(payment.getAmount() + 10);
-
-            Payment payment1 = session1.find(Payment.class, 1L);
-            payment1.setAmount(payment1.getAmount() + 20);
+            payment.setAmount(payment.getAmount() + 100);
 
             transaction.commit();
-            transaction1.commit();
         }
     }
 }
