@@ -7,7 +7,6 @@
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        <property name="hibernate.hbm2ddl.auto">validate</property>
         <property name="hibernate.hbm2ddl.auto">create</property>
 
         <mapping class="org.example.entity.User"/>

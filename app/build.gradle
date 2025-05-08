@@ -32,6 +32,8 @@ dependencies {
             classifier: "jakarta"
     )
     implementation(libs.hibernate.envers)
+    implementation(libs.jcache)
+    implementation(libs.ehcache)
 
     runtimeOnly(libs.postgres.driver)
     compileOnly(libs.lombok)

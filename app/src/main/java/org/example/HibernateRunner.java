@@ -5,8 +5,8 @@ package org.example;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.Payment;
+import org.example.entity.User;
 import org.example.util.HibernateUtil;
-import org.example.util.TestDataImporter;
 import org.hibernate.Transaction;
 
 
@@ -14,18 +14,19 @@ import org.hibernate.Transaction;
 public class HibernateRunner {
 
     public static void main(String[] args) {
-        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory
-                .withOptions()
-                .noInterceptor()
-                .openSession()) {
-            TestDataImporter.importData(factory);
-            Transaction transaction = session.beginTransaction();
-            Payment payment = session.find(Payment.class, 1L);
-            payment.setAmount(payment.getAmount() + 10);
-            payment.setAmount(payment.getAmount() + 10);
-            payment.setAmount(payment.getAmount() + 10);
-            session.remove(payment);
-            transaction.commit();
+        try (var factory = HibernateUtil.buildSessionFactory()) {
+            try (var session = factory.openSession()) {
+                Transaction transaction = session.beginTransaction();
+                User user = session.find(User.class, 1L);
+                User user1 = session.find(User.class, 1L);
+                transaction.commit();
+            }
+            try (var session = factory.openSession()) {
+                Transaction transaction = session.beginTransaction();
+                User user = session.find(User.class, 1L);
+                User user1 = session.find(User.class, 1L);
+                transaction.commit();
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ import org.hibernate.envers.RelationTargetAuditMode;
 @ToString(exclude = "receiver")
 @EqualsAndHashCode(callSuper = true)
 @Audited
+@Cacheable
 public class Payment extends AuditableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

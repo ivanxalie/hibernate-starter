@@ -10,8 +10,10 @@
         <property name="hibernate.connection.password">root</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        <property name="hibernate.hbm2ddl.auto">create</property>
-<!--        <property name="hibernate.connection.isolation">8</property>-->
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+        <property name="hibernate.cache.use_second_level_cache">true</property>
+        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.internal.JCacheRegionFactory</property>
+        <!--        <property name="hibernate.connection.isolation">8</property>-->
 
         <mapping class="org.example.entity.User"/>
         <mapping class="org.example.entity.Company"/>
