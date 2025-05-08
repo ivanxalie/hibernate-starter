@@ -2,6 +2,9 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Data
 @NoArgsConstructor
@@ -10,7 +13,7 @@ import lombok.*;
 @Entity
 @ToString(exclude = "receiver")
 @EqualsAndHashCode(callSuper = true)
-//@DynamicUpdate
+@Audited
 public class Payment extends AuditableEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

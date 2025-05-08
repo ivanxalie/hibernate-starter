@@ -2,12 +2,15 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.MapKeyJdbcTypeCode;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.type.SqlTypes;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 @Data
 @Entity
@@ -16,7 +19,7 @@ import java.util.*;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "users")
-//@BatchSize(size = 5)
+@Audited
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +32,7 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @MapKey(name = "username")
+    @NotAudited
     private SortedMap<String, User> users = new TreeMap<>();
 
     @ElementCollection
@@ -37,6 +41,7 @@ public class Company {
     @Column(name = "description")
     @MapKeyColumn(name = "lang")
     @MapKeyJdbcTypeCode(SqlTypes.CHAR)
+    @NotAudited
     private Map<String, String> locales = new HashMap<>();
 
     public void addUser(User user) {

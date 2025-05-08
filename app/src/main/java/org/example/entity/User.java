@@ -6,6 +6,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.FetchProfile;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
@@ -61,6 +63,7 @@ import static org.example.entity.User.USER_COMPANY_AND_PAYMENTS_GRAPH;
                 })
         }
 )
+@Audited
 public class User implements Comparable<User>, BaseEntity<Long> {
     public static final String USER_COMPANY_AND_PAYMENTS_GRAPH = "withCompanyAndPayment";
     public static final String USER_COMPANY_AND_CHAT_ENTITY_GRAPH = "WithCompanyAndChat";
@@ -97,11 +100,12 @@ public class User implements Comparable<User>, BaseEntity<Long> {
 
     @OneToMany(mappedBy = "user")
     @Builder.Default
+    @NotAudited
     private List<UserChat> userChats = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver")
     @Builder.Default
-//    @Fetch(FetchMode.SUBSELECT)
+    @NotAudited
     private List<Payment> payments = new ArrayList<>();
 
     @Override

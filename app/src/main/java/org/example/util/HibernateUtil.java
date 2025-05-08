@@ -3,6 +3,7 @@ package org.example.util;
 import lombok.experimental.UtilityClass;
 import org.example.converter.BirthdayConverter;
 import org.example.entity.Audit;
+import org.example.entity.Revision;
 import org.example.interceptor.GlobalInterceptor;
 import org.example.listener.AuditTableListener;
 import org.hibernate.SessionFactory;
@@ -19,7 +20,7 @@ public class HibernateUtil {
         SessionFactory factory = buildConfiguration()
                 .configure()
                 .buildSessionFactory();
-        registerListeners(factory);
+//        registerListeners(factory);
         return factory;
     }
 
@@ -37,6 +38,7 @@ public class HibernateUtil {
         return new Configuration()
                 .setInterceptor(new GlobalInterceptor())
                 .addAnnotatedClass(Audit.class)
+                .addAnnotatedClass(Revision.class)
                 .addAttributeConverter(BirthdayConverter.class)
                 .setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
     }
