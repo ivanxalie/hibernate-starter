@@ -2,6 +2,8 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.MapKeyJdbcTypeCode;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -20,6 +22,7 @@ import java.util.TreeMap;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "users")
 @Audited
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

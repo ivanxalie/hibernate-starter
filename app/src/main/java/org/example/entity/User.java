@@ -1,11 +1,12 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.FetchProfile;
-import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.type.SqlTypes;
@@ -64,6 +65,7 @@ import static org.example.entity.User.USER_COMPANY_AND_PAYMENTS_GRAPH;
         }
 )
 @Audited
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User implements Comparable<User>, BaseEntity<Long> {
     public static final String USER_COMPANY_AND_PAYMENTS_GRAPH = "withCompanyAndPayment";
     public static final String USER_COMPANY_AND_CHAT_ENTITY_GRAPH = "WithCompanyAndChat";
@@ -101,6 +103,7 @@ public class User implements Comparable<User>, BaseEntity<Long> {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     @NotAudited
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<UserChat> userChats = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver")
