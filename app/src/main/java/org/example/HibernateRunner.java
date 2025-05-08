@@ -14,10 +14,16 @@ import org.hibernate.Transaction;
 public class HibernateRunner {
 
     public static void main(String[] args) {
-        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory.openSession()) {
+        try (var factory = HibernateUtil.buildSessionFactory(); var session = factory
+                .withOptions()
+                .noInterceptor()
+                .openSession()) {
             TestDataImporter.importData(factory);
             Transaction transaction = session.beginTransaction();
             Payment payment = session.find(Payment.class, 1L);
+            payment.setAmount(payment.getAmount() + 10);
+            payment.setAmount(payment.getAmount() + 10);
+            payment.setAmount(payment.getAmount() + 10);
             session.remove(payment);
             transaction.commit();
         }
