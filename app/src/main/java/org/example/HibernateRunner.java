@@ -4,6 +4,7 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.entity.Payment;
 import org.example.entity.User;
 import org.example.util.HibernateUtil;
 import org.hibernate.Transaction;
@@ -21,6 +22,14 @@ public class HibernateRunner {
                 user.getCompany().getName();
                 user.getUserChats().size();
                 User user1 = session.find(User.class, 1L);
+
+                var payments = session
+                        .createQuery("select p from Payment p where p.receiver.id = :userId", Payment.class)
+                        .setCacheable(true)
+//                        .setCacheRegion("Payments")
+                        .setParameter("userId", 1L)
+                        .getResultList();
+
                 transaction.commit();
             }
             try (var session = factory.openSession()) {
@@ -28,6 +37,14 @@ public class HibernateRunner {
                 User user2 = session.find(User.class, 1L);
                 user2.getCompany().getName();
                 user2.getUserChats().size();
+
+                var payments = session
+                        .createQuery("select p from Payment p where p.receiver.id = :userId", Payment.class)
+                        .setParameter("userId", 1L)
+                        .setCacheable(true)
+//                        .setCacheRegion("Payments")
+                        .getResultList();
+
                 transaction.commit();
             }
         }
