@@ -13,7 +13,6 @@ log_4j = "1.7.32"
 containers = "1.21.0"
 jakartaPersistenceApiVersion = "3.1.0"
 queryDslVersion = "5.1.0"
-ehchache_version = "3.10.8"
 
 [libraries]
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
@@ -32,4 +31,3 @@ jpamodelgen = { module = "org.hibernate:hibernate-jpamodelgen", version.ref = "h
 query-dsl-core = { module = "com.querydsl:querydsl-core", version.ref = "queryDslVersion" }
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistenceApiVersion" }
 jcache = { module = "org.hibernate:hibernate-jcache", version.ref = "hibernate" }
-ehcache = { module = "org.ehcache:ehcache", version.ref = "ehchache_version" }

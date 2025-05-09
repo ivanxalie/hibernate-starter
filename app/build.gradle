@@ -33,7 +33,12 @@ dependencies {
     )
     implementation(libs.hibernate.envers)
     implementation(libs.jcache)
-    implementation(libs.ehcache)
+    implementation(
+            group: "org.ehcache",
+            name: "ehcache",
+            version: "3.10.8",
+            classifier: "jakarta"
+    )
 
     runtimeOnly(libs.postgres.driver)
     compileOnly(libs.lombok)
@@ -48,7 +53,6 @@ dependencies {
     annotationProcessor(libs.jakarta.persistence.api)
 
     testImplementation(libs.junit.api)
-//    testImplementation(libs.h2)
     testImplementation(libs.junit.params) // если используешь @ParameterizedTest
     testImplementation(libs.assertj.lib)
     testImplementation(libs.testcontainers)

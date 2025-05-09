@@ -22,7 +22,7 @@ import java.util.TreeMap;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "users")
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "Companies")
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -65,7 +65,7 @@ import static org.example.entity.User.USER_COMPANY_AND_PAYMENTS_GRAPH;
         }
 )
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "Users")
 public class User implements Comparable<User>, BaseEntity<Long> {
     public static final String USER_COMPANY_AND_PAYMENTS_GRAPH = "withCompanyAndPayment";
     public static final String USER_COMPANY_AND_CHAT_ENTITY_GRAPH = "WithCompanyAndChat";
