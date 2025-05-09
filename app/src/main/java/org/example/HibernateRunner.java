@@ -7,16 +7,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.dao.PaymentRepository;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
+import java.lang.reflect.Proxy;
 
 
 @Slf4j
 public class HibernateRunner {
     public static void main(String[] args) {
         try (var factory = HibernateUtil.buildSessionFactory()) {
-            Session session = factory.getCurrentSession();
+            var session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
+                    new Class[]{Session.class},
+                    (proxy, method, args1) ->
+                            method.invoke(factory.getCurrentSession(), args1));
             Transaction transaction = session.beginTransaction();
-            PaymentRepository repository = new PaymentRepository(factory.createEntityManager());
+
+            PaymentRepository repository = new PaymentRepository(session);
             repository.findAllByReceiverId(1L).forEach(System.out::println);
             transaction.commit();
         }
