@@ -3,6 +3,8 @@ package org.example.entity;
 import jakarta.persistence.*;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.*;
@@ -76,9 +78,11 @@ public class User implements Comparable<User>, BaseEntity<Long> {
 
     @Column(unique = true)
     @EqualsAndHashCode.Include
+    @NotNull
     private String username;
 
     @Embedded
+    @Valid
     private PersonalInfo personalInfo;
 
     @Enumerated(EnumType.STRING)

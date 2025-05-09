@@ -13,6 +13,8 @@ log_4j = "1.7.32"
 containers = "1.21.0"
 jakartaPersistenceApiVersion = "3.1.0"
 queryDslVersion = "5.1.0"
+validator = "7.0.1.Final"
+el = "4.0.1"
 
 [libraries]
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
@@ -21,6 +23,9 @@ junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref 
 assertj-lib = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 hibernate-core = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
 hibernate-envers = { module = "org.hibernate:hibernate-envers", version.ref = "hibernate" }
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "validator" }
+hibernate-validator-processor = { module = "org.hibernate.validator:hibernate-validator-annotation-processor", version.ref = "validator" }
+hibernate-validator-cdi = { module = "org.hibernate.validator:hibernate-validator", version.ref = "validator" }
 postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok_version" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "databind" }
@@ -30,4 +35,6 @@ testcontainers = { module = "org.testcontainers:postgresql", version.ref = "cont
 jpamodelgen = { module = "org.hibernate:hibernate-jpamodelgen", version.ref = "hibernate" }
 query-dsl-core = { module = "com.querydsl:querydsl-core", version.ref = "queryDslVersion" }
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistenceApiVersion" }
+jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakartaPersistenceApiVersion" }
+jakarta-el-api = { module = "org.glassfish:jakarta.el", version.ref = "el" }
 jcache = { module = "org.hibernate:hibernate-jcache", version.ref = "hibernate" }

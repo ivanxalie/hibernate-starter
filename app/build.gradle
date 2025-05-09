@@ -39,6 +39,10 @@ dependencies {
             version: "3.10.8",
             classifier: "jakarta"
     )
+    implementation(libs.jakarta.validation.api)
+    implementation(libs.hibernate.validator)
+    implementation(libs.hibernate.validator.cdi)
+    implementation(libs.jakarta.el.api)
 
     runtimeOnly(libs.postgres.driver)
     compileOnly(libs.lombok)
@@ -51,6 +55,7 @@ dependencies {
             classifier: "jakarta"
     )
     annotationProcessor(libs.jakarta.persistence.api)
+    annotationProcessor(libs.hibernate.validator.processor)
 
     testImplementation(libs.junit.api)
     testImplementation(libs.junit.params) // если используешь @ParameterizedTest
