@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.repository;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;

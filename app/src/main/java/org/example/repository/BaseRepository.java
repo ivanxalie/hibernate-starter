@@ -1,12 +1,16 @@
-package org.example.dao;
+package org.example.repository;
 
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.dao.Repository;
 import org.example.entity.BaseEntity;
+import org.hibernate.jpa.SpecHints;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -19,6 +23,13 @@ public abstract class BaseRepository<ID extends Serializable, E extends BaseEnti
     public E save(E entity) {
         manager.persist(entity);
         return entity;
+    }
+
+    @Override
+    public EntityGraph<E> createAndPutEntityGraphIntoMap(Map<String, Object> properties) {
+        EntityGraph<E> graph = manager.createEntityGraph(clazz);
+        properties.put(SpecHints.HINT_SPEC_FETCH_GRAPH, graph);
+        return graph;
     }
 
     @Override
@@ -36,8 +47,8 @@ public abstract class BaseRepository<ID extends Serializable, E extends BaseEnti
     }
 
     @Override
-    public Optional<E> findById(ID id) {
-        return Optional.ofNullable(manager.find(clazz, id));
+    public Optional<E> findById(ID id, Map<String, Object> props) {
+        return Optional.ofNullable(manager.find(clazz, id, props));
     }
 
     @Override

@@ -3,29 +3,81 @@
  */
 package org.example;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dao.PaymentRepository;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.matcher.ElementMatchers;
+import org.example.dto.UserCreateDto;
+import org.example.entity.PersonalInfo;
+import org.example.entity.Role;
+import org.example.interceptor.TransactionInterceptor;
+import org.example.mapper.CompanyReadMapper;
+import org.example.mapper.UserCreateMapper;
+import org.example.mapper.UserReadMapper;
+import org.example.repository.CompanyRepository;
+import org.example.repository.UserRepository;
+import org.example.service.UserService;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
+import java.time.LocalDate;
 
 
 @Slf4j
 public class HibernateRunner {
+    @SneakyThrows
     public static void main(String[] args) {
         try (var factory = HibernateUtil.buildSessionFactory()) {
             var session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
                     new Class[]{Session.class},
                     (proxy, method, args1) ->
                             method.invoke(factory.getCurrentSession(), args1));
-            Transaction transaction = session.beginTransaction();
 
-            PaymentRepository repository = new PaymentRepository(session);
-            repository.findAllByReceiverId(1L).forEach(System.out::println);
-            transaction.commit();
+            var userRepository = new UserRepository(session);
+            var companyMapper = new CompanyReadMapper();
+            var userReadMapper = new UserReadMapper(companyMapper);
+            var companyRepository = new CompanyRepository(session);
+            var userCreateMapper = new UserCreateMapper(companyRepository);
+            TransactionInterceptor interceptor = new TransactionInterceptor(factory);
+            var service = createUserProxyService(interceptor, userRepository, userReadMapper, userCreateMapper);
+
+
+            Long userId = service.create(new UserCreateDto(
+                    PersonalInfo.builder()
+                            .firstName("Alex")
+                            .lastName("Jensen")
+                            .birthDate(LocalDate.of(1995, 2, 15))
+                            .build(),
+                    "alex@jensen.com",
+                    """
+                            {
+                                "first_name": "Alex",
+                                "last_name": "Jensen",
+                                "nickname": "boringHotStuff",
+                                "age": 30
+                            }
+                            """,
+                    Role.ADMIN,
+                    2
+            ));
+            service.findById(userId).ifPresent(System.out::println);
         }
+    }
+
+    @SuppressWarnings("resource")
+    private static UserService createUserProxyService(TransactionInterceptor interceptor, UserRepository userRepository, UserReadMapper userReadMapper, UserCreateMapper userCreateMapper) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        return new ByteBuddy()
+                .subclass(UserService.class)
+                .method(ElementMatchers.any())
+                .intercept(MethodDelegation.to(interceptor))
+                .make()
+                .load(UserService.class.getClassLoader())
+                .getLoaded()
+                .getDeclaredConstructor(UserRepository.class, UserReadMapper.class, UserCreateMapper.class)
+                .newInstance(userRepository, userReadMapper, userCreateMapper);
     }
 }
