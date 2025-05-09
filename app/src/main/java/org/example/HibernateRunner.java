@@ -50,7 +50,7 @@ public class HibernateRunner {
                     PersonalInfo.builder()
                             .firstName("Alex")
                             .lastName("Jensen")
-                            .birthDate(LocalDate.of(1995, 2, 15))
+//                            .birthDate(LocalDate.of(1995, 2, 15))
                             .build(),
                     "alex@jensen.com",
                     """
@@ -61,7 +61,7 @@ public class HibernateRunner {
                                 "age": 30
                             }
                             """,
-                    Role.ADMIN,
+                    null,
                     2
             ));
             service.findById(userId).ifPresent(System.out::println);

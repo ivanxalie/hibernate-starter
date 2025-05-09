@@ -3,6 +3,11 @@ package org.example.service;
 import jakarta.persistence.EntityGraph;
 import jakarta.persistence.Subgraph;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.UserCreateDto;
 import org.example.dto.UserReadDto;
@@ -11,6 +16,7 @@ import org.example.entity.User;
 import org.example.mapper.UserCreateMapper;
 import org.example.mapper.UserReadMapper;
 import org.example.repository.UserRepository;
+import org.example.validation.UpdateCheck;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +31,11 @@ public class UserService {
     @Transactional
     public Long create(UserCreateDto userDto) {
         // validate
+        @Cleanup ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        var result = validator.validate(userDto, UpdateCheck.class);
+        if (!result.isEmpty())
+            throw new ConstraintViolationException(result);
         User user = userCreateMapper.mapFrom(userDto);
         return userRepository.save(user).getId();
     }
