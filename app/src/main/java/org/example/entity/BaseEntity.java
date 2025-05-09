@@ -2,8 +2,8 @@ package org.example.entity;
 
 import java.io.Serializable;
 
-public interface BaseEntity<T extends Serializable> {
-    T getId();
+public interface BaseEntity<ID extends Serializable> {
+    ID getId();
 
-    void setId(T id);
+    void setId(ID id);
 }

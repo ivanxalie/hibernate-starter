@@ -4,49 +4,21 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Payment;
-import org.example.entity.User;
+import org.example.dao.PaymentRepository;
 import org.example.util.HibernateUtil;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 
 @Slf4j
 public class HibernateRunner {
-
     public static void main(String[] args) {
         try (var factory = HibernateUtil.buildSessionFactory()) {
-            User user;
-            try (var session = factory.openSession()) {
-                Transaction transaction = session.beginTransaction();
-                user = session.find(User.class, 1L);
-                user.getCompany().getName();
-                user.getUserChats().size();
-                User user1 = session.find(User.class, 1L);
-
-                var payments = session
-                        .createQuery("select p from Payment p where p.receiver.id = :userId", Payment.class)
-                        .setCacheable(true)
-//                        .setCacheRegion("Payments")
-                        .setParameter("userId", 1L)
-                        .getResultList();
-
-                transaction.commit();
-            }
-            try (var session = factory.openSession()) {
-                Transaction transaction = session.beginTransaction();
-                User user2 = session.find(User.class, 1L);
-                user2.getCompany().getName();
-                user2.getUserChats().size();
-
-                var payments = session
-                        .createQuery("select p from Payment p where p.receiver.id = :userId", Payment.class)
-                        .setParameter("userId", 1L)
-                        .setCacheable(true)
-//                        .setCacheRegion("Payments")
-                        .getResultList();
-
-                transaction.commit();
-            }
+            Session session = factory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            PaymentRepository repository = new PaymentRepository(factory.createEntityManager());
+            repository.findAllByReceiverId(1L).forEach(System.out::println);
+            transaction.commit();
         }
     }
 }
